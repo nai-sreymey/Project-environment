@@ -1,0 +1,163 @@
+import React, { useRef, useState } from "react";
+import Header from "../components/Header";
+
+interface MediaItem {
+  url: string;
+  type: "image" | "video";
+}
+
+interface Member {
+  email: string;
+  avatar: string;
+}
+
+const CreatePost: React.FC = () => {
+  const [description, setDescription] = useState("");
+  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [newEmail, setNewEmail] = useState("");
+  const [category, setCategory] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newMedia: MediaItem[] = files.map((file) => ({
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith("image") ? "image" : "video"
+    }));
+    setMedia((prev) => [...prev, ...newMedia]);
+  };
+
+  const handleAddMember = () => {
+    if (!newEmail.trim()) return;
+
+    const avatarUrl = "/images/mey.png"; // default avatar
+    setMembers((prev) => [...prev, { email: newEmail.trim(), avatar: avatarUrl }]);
+    setNewEmail("");
+  };
+
+  const canSubmit = description.trim() !== "" && category !== "" && media.length > 0;
+
+  return (
+    <div className="min-h-screen bg-green-100 font-sans text-lg">
+      <Header />
+
+      <div className="max-w-3xl mx-auto py-10 px-4 text-center">
+        {/* Members */}
+        <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
+          {members.slice(0, 4).map((member, index) => (
+            <img
+              key={index}
+              src={member.avatar}
+              alt="member"
+              className="w-16 h-16 rounded-full border"
+            />
+          ))}
+          {members.length > 4 && (
+            <div className="w-16 h-16 rounded-full border flex items-center justify-center bg-white">
+              +{members.length - 4}
+            </div>
+          )}
+        </div>
+
+        {/* Add Member */}
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <input
+            type="email"
+            placeholder="Enter member email"
+            className="border border-green-300 rounded px-3 py-2"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+          />
+          <button
+            onClick={handleAddMember}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            + Add Member
+          </button>
+        </div>
+
+        {/* Project Title */}
+        <h2 className="text-2xl font-semibold">Project Title</h2>
+        <h1 className="text-3xl font-bold italic mb-6">
+          “Urban Wildlife Garden for Biodiversity”
+        </h1>
+
+        {/* Short Description */}
+        <p className="mb-6 text-xl font-medium">
+          <span className="font-semibold">Short Description:</span> Creating a native-plant wildlife garden in the city to attract pollinators, birds, and insects, supporting local biodiversity and community awareness.
+        </p>
+
+        {/* Full Description */}
+        <div className="mb-8 border rounded-md border-green-400 bg-white shadow p-8 text-left">
+          <label className="block mb-4 text-xl font-bold text-green-700">
+            Full Project Description
+          </label>
+          <textarea
+            className="w-full p-4 border border-green-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
+            placeholder="Write your project description..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{ minHeight: "160px" }}
+          />
+        </div>
+
+        {/* Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mb-10">
+          <select
+            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            <option>Environment</option>
+            <option>Wildlife</option>
+            <option>Community</option>
+          </select>
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
+          >
+            Photo and Video
+          </button>
+
+          <input
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            hidden
+            ref={fileInputRef}
+            onChange={handleMediaChange}
+          />
+
+          <button
+            disabled={!canSubmit}
+            className={`px-6 py-3 text-lg rounded ${
+              canSubmit
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            Submit
+          </button>
+        </div>
+
+        {/* Media Preview */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {media.map((item, index) => (
+            <div key={index} className="border rounded overflow-hidden">
+              {item.type === "image" ? (
+                <img src={item.url} alt="media" className="w-full h-40 object-cover" />
+              ) : (
+                <video src={item.url} controls className="w-full h-40 object-cover" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CreatePost;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -49,7 +50,7 @@ const Login = () => {
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: "url('/background.png')" }}
     >
-      <div className="bg-black bg-opacity-30 p-8 rounded-xl shadow-md w-full max-w-sm">
+      <div className="bg-black bg-opacity-30 p-16 rounded-xl shadow-md w-full max-w-sm">
         <h2 className="text-3xl font-semibold text-white text-center mb-6">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -84,9 +85,21 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-4 text-center">
-          <a href="#" className="text-white text-sm underline">
-            Forgot Password
-          </a>
+        <Link
+  to="/forgot-password" // Navigate to forgot password page
+  className="text-sm text-white hover:text-green-400 underline"
+>
+  Forgot Password?
+</Link>
+
+        </div>
+        <div className="mt-2 text-center">
+          <Link
+            to="/register" // Use Link to navigate to the Register page
+            className="text-sm text-white hover:text-green-400 underline"
+          >
+            Don't have an account? Register
+          </Link>
         </div>
       </div>
     </div>
