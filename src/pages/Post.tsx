@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
 interface MediaItem {
@@ -12,13 +13,17 @@ interface Member {
 }
 
 const CreatePost: React.FC = () => {
+  const navigate = useNavigate();
   const [description, setDescription] = useState("");
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [newEmail, setNewEmail] = useState("");
   const [category, setCategory] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Handle media change
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newMedia: MediaItem[] = files.map((file) => ({
@@ -28,6 +33,7 @@ const CreatePost: React.FC = () => {
     setMedia((prev) => [...prev, ...newMedia]);
   };
 
+  // Handle adding member by email
   const handleAddMember = () => {
     if (!newEmail.trim()) return;
 
@@ -36,10 +42,61 @@ const CreatePost: React.FC = () => {
     setNewEmail("");
   };
 
+  // Submit handler
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setSubmitted(true);
+
+      // Redirect after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+        navigate("/"); // Navigate to home page
+      }, 5000); // <- 5 seconds delay
+    }, 1500); // simulate loading
+  };
+
+  // Check if submit is valid
   const canSubmit = description.trim() !== "" && category !== "" && media.length > 0;
 
+  // Redirect when the "submitted" state is true
+  useEffect(() => {
+    if (submitted) {
+      // Wait for 5 seconds before redirecting
+      setTimeout(() => {
+        navigate("/"); // Navigate to home page
+      }, 5000);
+    }
+  }, [submitted, navigate]);
+
   return (
-    <div className="min-h-screen bg-green-100 font-sans text-lg">
+    <div className="min-h-screen bg-green-100 font-sans text-lg relative">
+      {/* Success/Loading overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center text-white z-50">
+          <div className="text-center animate-pulse">
+            <h2 className="text-3xl font-semibold">Submitting...</h2>
+            <div className="mt-4 spinner"></div>
+          </div>
+        </div>
+      )}
+
+      {submitted && (
+        <div className="absolute inset-0 bg-green-700 bg-opacity-50 flex items-center justify-center text-white z-50 transition-all duration-500 ease-in-out">
+          <div className="text-center animate-bounce">
+            <h2 className="text-5xl font-bold mb-4">Waiting for Teacher's Approval</h2>
+            <p className="text-2xl">Your post is under review. Please wait for the teacher's approval.</p>
+            <div className="mt-6">
+              <p className="text-lg font-semibold">Redirecting...</p>
+              <div className="mt-4 w-20 h-20 border-4 border-t-4 border-white rounded-full animate-spin"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Header />
 
       <div className="max-w-3xl mx-auto py-10 px-4 text-center">
@@ -132,6 +189,7 @@ const CreatePost: React.FC = () => {
           />
 
           <button
+            onClick={handleSubmit}
             disabled={!canSubmit}
             className={`px-6 py-3 text-lg rounded ${
               canSubmit

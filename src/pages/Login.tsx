@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -8,6 +8,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,7 +37,8 @@ const Login = () => {
     e.preventDefault();
     if (validate()) {
       alert('Logged in successfully!');
-      // Proceed to backend call here
+      // Redirect to home page after successful login
+      navigate('/'); // Navigate to the home page
     }
   };
 
@@ -85,13 +87,12 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-4 text-center">
-        <Link
-  to="/forgot-password" // Navigate to forgot password page
-  className="text-sm text-white hover:text-green-400 underline"
->
-  Forgot Password?
-</Link>
-
+          <Link
+            to="/forgot-password" // Navigate to forgot password page
+            className="text-sm text-white hover:text-green-400 underline"
+          >
+            Forgot Password?
+          </Link>
         </div>
         <div className="mt-2 text-center">
           <Link

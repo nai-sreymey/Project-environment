@@ -11,9 +11,16 @@ const CategoryList = () => {
   // Show only first 8 categories unless showAll is true
   const visibleCategories = showAll ? categories : categories.slice(0, 8);
 
+  // Check if the user is authenticated
+  const isAuthenticated = !!localStorage.getItem("userToken"); // Example check (you might use a more complex method)
+
   // Handle navigation to the "CreatePost" page
   const handleCreateProject = () => {
-    navigate('/post'); // Navigate to the "CreatePost" page
+    if (isAuthenticated) {
+      navigate('/post'); // Navigate to the "CreatePost" page if logged in
+    } else {
+      navigate('/post'); // Navigate to the "Login" page if not logged in
+    }
   };
 
   return (

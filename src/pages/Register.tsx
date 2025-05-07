@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -11,6 +12,7 @@ const Register = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,7 +43,8 @@ const Register = () => {
     e.preventDefault();
     if (validate()) {
       alert('Registered successfully!');
-      // Submit form data to backend here
+      // Redirect to login page after successful registration
+      navigate('/login'); // Navigate to the login page
     }
   };
 
