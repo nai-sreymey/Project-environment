@@ -31,12 +31,14 @@ const Header = () => {
         <a href="#" className="text-white flex items-center gap-1">
           Project <ChevronDown className="w-4 h-4" />
         </a>
+        <a href="#" className="text-white">Events</a>
+
         <div className="relative">
           <button
             onClick={toggleDropdown}
             className="text-white flex items-center gap-1"
           >
-            User <ChevronDown className="w-4 h-4" />
+            User  
           </button>
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-white text-black rounded-lg shadow-lg">
