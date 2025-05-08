@@ -46,7 +46,7 @@ const CategoryList = () => {
 
       {/* Section Title */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Plants</h2>
+        <h2 className="text-2xl font-bold">Biodiversity</h2>
         <button
           onClick={() => setShowAll(!showAll)}
           className="text-sm text-blue-500 hover:underline mr-4 md:mr-12"

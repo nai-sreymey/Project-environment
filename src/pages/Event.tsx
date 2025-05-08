@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Header from "../components/Header";
 
 export const Card = ({
@@ -28,11 +29,18 @@ export const CardContent = ({
 };
 
 const EventPage = () => {
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  // Handle the back button click
+  const handleBackClick = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
+
   return (
-    <div className="bg-green-100 min-h-screen text-center font-sans">
+    <div className="bg-green-100 min-h-screen text-center font-sans flex flex-col">
       <Header />
 
-      <section className="py-10 px-4">
+      <section className="py-10 px-4 flex-grow">
         <h2 className="text-4xl font-extrabold text-black">
           Event PSE environment
         </h2>
@@ -42,6 +50,7 @@ const EventPage = () => {
         </p>
 
         <div className="max-w-5xl mx-auto mt-12 space-y-10">
+          {/* Cards */}
           <Card className="flex flex-col sm:flex-row items-center gap-6">
             <img
               src="/images/trees.png"
@@ -115,6 +124,16 @@ const EventPage = () => {
           </Card>
         </div>
       </section>
+
+      {/* Back Button at the bottom */}
+      <div className="mt-auto mb-6">
+        <button
+          onClick={handleBackClick}
+          className="px-6 py-3 bg-gray-500 text-white rounded-full hover:bg-gray-600"
+        >
+          Back
+        </button>
+      </div>
     </div>
   );
 };

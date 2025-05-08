@@ -1,6 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Detail: React.FC = () => {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  // Function to handle back button click
+  const handleBackClick = () => {
+    navigate('/'); // Navigate to the category page (or adjust path if needed)
+  };
+
   return (
     <section className="bg-green-50 text-black p-10 min-h-screen flex flex-col items-center">
       <h1 className="text-5xl font-extrabold mb-10">Biodiversity</h1>
@@ -46,11 +54,19 @@ const Detail: React.FC = () => {
       </div>
 
       <div className="flex gap-6 mt-12">
+        {/* Back button */}
+        <button
+          onClick={handleBackClick} // Add onClick handler to navigate back
+          className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-full"
+        >
+          Back
+        </button>
+
         <button className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-full">
           Slide
         </button>
         <button className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-full">
-          Document
+          Video
         </button>
       </div>
     </section>

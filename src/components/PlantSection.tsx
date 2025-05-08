@@ -31,7 +31,7 @@ const PlantSection: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center max-w-6xl mx-auto">
         {plantData.map((plant, index) => (
-          <Card key={index} {...plant} />
+          <Card id={''} key={index} {...plant} />
         ))}
       </div>
     </section>

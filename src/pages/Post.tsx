@@ -16,6 +16,7 @@ const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const [description, setDescription] = useState("");
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const [slideLinks, setSlideLinks] = useState<string[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [newEmail, setNewEmail] = useState("");
   const [category, setCategory] = useState("");
@@ -36,10 +37,17 @@ const CreatePost: React.FC = () => {
   // Handle adding member by email
   const handleAddMember = () => {
     if (!newEmail.trim()) return;
-
     const avatarUrl = "/images/mey.png"; // default avatar
     setMembers((prev) => [...prev, { email: newEmail.trim(), avatar: avatarUrl }]);
     setNewEmail("");
+  };
+
+  // Handle slide link input
+  const handleAddSlideLink = () => {
+    const link = prompt("Please enter the slide link (e.g., Google Slides)");
+    if (link && link.trim() !== "") {
+      setSlideLinks((prev) => [...prev, link.trim()]);
+    }
   };
 
   // Submit handler
@@ -50,31 +58,25 @@ const CreatePost: React.FC = () => {
     setTimeout(() => {
       setIsLoading(false);
       setSubmitted(true);
-
-      // Redirect after 5 seconds
       setTimeout(() => {
         setSubmitted(false);
-        navigate("/"); // Navigate to home page
-      }, 5000); // <- 5 seconds delay
-    }, 1500); // simulate loading
+        navigate("/");
+      }, 5000);
+    }, 1500);
   };
 
-  // Check if submit is valid
   const canSubmit = description.trim() !== "" && category !== "" && media.length > 0;
 
-  // Redirect when the "submitted" state is true
   useEffect(() => {
     if (submitted) {
-      // Wait for 5 seconds before redirecting
       setTimeout(() => {
-        navigate("/"); // Navigate to home page
+        navigate("/");
       }, 5000);
     }
   }, [submitted, navigate]);
 
   return (
     <div className="min-h-screen bg-green-100 font-sans text-lg relative">
-      {/* Success/Loading overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center text-white z-50">
           <div className="text-center animate-pulse">
@@ -84,18 +86,18 @@ const CreatePost: React.FC = () => {
         </div>
       )}
 
-      {submitted && (
-        <div className="absolute inset-0 bg-green-700 bg-opacity-50 flex items-center justify-center text-white z-50 transition-all duration-500 ease-in-out">
-          <div className="text-center animate-bounce">
-            <h2 className="text-5xl font-bold mb-4">Waiting for Teacher's Approval</h2>
-            <p className="text-2xl">Your post is under review. Please wait for the teacher's approval.</p>
-            <div className="mt-6">
-              <p className="text-lg font-semibold">Redirecting...</p>
-              <div className="mt-4 w-20 h-20 border-4 border-t-4 border-white rounded-full animate-spin"></div>
-            </div>
-          </div>
+     {submitted && (
+      <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center text-gray-800 z-50 transition-opacity duration-500">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-semibold text-green-700">Waiting for Teacher's Approval</h2>
+          <p className="text-lg">Your post has been submitted and is currently under review.</p>
+          <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-gray-500">Redirecting in a few seconds...</p>
         </div>
-      )}
+      </div>
+    )}
+    
+      
 
       <Header />
 
@@ -189,6 +191,13 @@ const CreatePost: React.FC = () => {
           />
 
           <button
+            onClick={handleAddSlideLink}
+            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
+          >
+            Slide
+          </button>
+
+          <button
             onClick={handleSubmit}
             disabled={!canSubmit}
             className={`px-6 py-3 text-lg rounded ${
@@ -213,6 +222,27 @@ const CreatePost: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* Slide Links Preview */}
+        {slideLinks.length > 0 && (
+          <div className="mt-10 text-left">
+            <h3 className="text-xl font-semibold mb-2">Slide Links</h3>
+            <ul className="list-disc pl-6">
+              {slideLinks.map((link, index) => (
+                <li key={index}>
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    Slide {index + 1}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
