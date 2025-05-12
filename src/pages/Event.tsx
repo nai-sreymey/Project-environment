@@ -129,7 +129,7 @@ const EventPage = () => {
       <div className="mt-auto mb-6">
         <button
           onClick={handleBackClick}
-          className="px-6 py-3 bg-gray-500 text-white rounded-full hover:bg-gray-600"
+          className="px-6 py-3 bg-gray-400 text-white rounded-full hover:bg-gray-600"
         >
           Back
         </button>

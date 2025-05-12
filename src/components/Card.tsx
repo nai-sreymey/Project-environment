@@ -1,51 +1,62 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface CardProps {
   title: string;
   image: string;
   description: string;
-  id: string; // Add an id prop to uniquely identify each card
+  id: string;
 }
 
 const Card: React.FC<CardProps> = ({ title, image, description, id }) => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  // Handle button click to navigate to the detail page
   const handleDetailClick = () => {
-    navigate(`/detail/${id}`); // Navigate to the detail page with the card's id
+    setLoading(true);
+    setTimeout(() => {
+      navigate(`/detail/${id}`);
+    }, 700); // 2 seconds delay
   };
 
-  // Handle back button click to navigate to the previous page
   const handleBackClick = () => {
-    navigate(-1); // Go back to the previous page in history
+    setLoading(true);
+    setTimeout(() => {
+      navigate(-1);
+    }, 2000); // 2 seconds delay
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 w-full sm:w-[250px] md:w-[300px] hover:shadow-lg transition overflow-hidden">
-      <img src={image} alt={title} className="w-full h-48 object-cover rounded-md mb-4" />
-      <h3 className="font-bold text-xl">{title}</h3>
-      <p className="text-gray-600 mt-2 break-words">{description}</p>
+    <>
+      {/* Fullscreen loading spinner */}
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center z-50">
+          <div className="w-12 h-12 border-4 border-green-600 border-dashed rounded-full animate-spin"></div>
+        </div>
+      )}
 
-      {/* Button Container with Flexbox */}
-      <div className="mt-4 flex justify-between gap-4">
-        {/* Back Button (Left) */}
-        <button
-          onClick={handleBackClick} // Navigate back to the previous page
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Back
-        </button>
+      <div className="bg-white rounded-xl shadow-md p-6 w-full sm:w-[250px] md:w-[300px] hover:shadow-lg transition overflow-hidden">
+        <img src={image} alt={title} className="w-full h-48 object-cover rounded-md mb-4" />
+        <h3 className="font-bold text-xl">{title}</h3>
+        <p className="text-gray-600 mt-2 break-words">{description}</p>
 
-        {/* Detail Button (Right) */}
-        <button
-          onClick={handleDetailClick} // Navigate to detail page
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-        >
-          Detail
-        </button>
+        <div className="mt-4 flex justify-between gap-4">
+          <button
+            onClick={handleBackClick}
+            className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600"
+          >
+            Back
+          </button>
+
+          <button
+            onClick={handleDetailClick}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Detail
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

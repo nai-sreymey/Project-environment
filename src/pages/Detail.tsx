@@ -57,7 +57,7 @@ const Detail: React.FC = () => {
         {/* Back button */}
         <button
           onClick={handleBackClick} // Add onClick handler to navigate back
-          className="bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-full"
+          className="bg-gray-400 hover:bg-green-700 text-white text-lg px-8 py-3 rounded-full"
         >
           Back
         </button>
