@@ -10,6 +10,7 @@ import CreatePost from './pages/Post';
 import CategoryList from './components/CategoryList';
 import AboutUs from "./pages/About";
 import EventPage from "./pages/Event";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
         <Route path="/category-list" element={<CategoryList />} />     
         <Route path="/about" element={<AboutUs />} />     
         <Route path="/event" element={<EventPage />} />     
+        <Route path="/profile" element={<ProfilePage />} />  
+           
+
 
 
       </Routes>

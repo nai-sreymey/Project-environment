@@ -29,11 +29,10 @@ export const CardContent = ({
 };
 
 const EventPage = () => {
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
-  // Handle the back button click
   const handleBackClick = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   };
 
   return (
@@ -50,7 +49,7 @@ const EventPage = () => {
         </p>
 
         <div className="max-w-5xl mx-auto mt-12 space-y-10">
-          {/* Cards */}
+          {/* Tree Planting Event */}
           <Card className="flex flex-col sm:flex-row items-center gap-6">
             <img
               src="/images/trees.png"
@@ -66,9 +65,15 @@ const EventPage = () => {
                 land to help improve air quality and provide beauty. Let's
                 contribute to a greener world!
               </p>
+              <div className="mt-3 text-sm text-gray-600 space-y-1">
+                <p><strong>Date:</strong> May 20, 2025</p>
+                <p><strong>Time:</strong> 8:00 AM - 11:30 AM</p>
+                <p><strong>Location:</strong> Phnom Penh Community Park</p>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Plastic-Free Challenge */}
           <Card className="flex flex-col sm:flex-row items-center gap-6">
             <img
               src="/images/trees.png"
@@ -84,9 +89,15 @@ const EventPage = () => {
                 plastic straws, bottles, and bags. Eco-friendly prizes await the
                 winners!
               </p>
+              <div className="mt-3 text-sm text-gray-600 space-y-1">
+                <p><strong>Date:</strong> May 22–28, 2025</p>
+                <p><strong>Time:</strong> All Day</p>
+                <p><strong>Location:</strong> Online & Local Markets</p>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Green Art Contest */}
           <Card className="flex flex-col sm:flex-row items-center gap-6">
             <img
               src="/images/trees.png"
@@ -102,9 +113,15 @@ const EventPage = () => {
                 recycled materials. Show how you care for nature through your
                 talent!
               </p>
+              <div className="mt-3 text-sm text-gray-600 space-y-1">
+                <p><strong>Date:</strong> May 25, 2025</p>
+                <p><strong>Time:</strong> 1:00 PM - 4:00 PM</p>
+                <p><strong>Location:</strong> PSE Art Center Hall</p>
+              </div>
             </CardContent>
           </Card>
 
+          {/* Eco Hero Awards */}
           <Card className="flex flex-col sm:flex-row items-center gap-6">
             <img
               src="/images/trees.png"
@@ -120,12 +137,17 @@ const EventPage = () => {
                 cleaning up, planting trees, or recycling—be our Eco Hero and
                 earn a certificate of recognition!
               </p>
+              <div className="mt-3 text-sm text-gray-600 space-y-1">
+                <p><strong>Date:</strong> May 30, 2025</p>
+                <p><strong>Time:</strong> 3:00 PM - 6:00 PM</p>
+                <p><strong>Location:</strong> PSE Auditorium</p>
+              </div>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Back Button at the bottom */}
+      {/* Back Button */}
       <div className="mt-auto mb-6">
         <button
           onClick={handleBackClick}

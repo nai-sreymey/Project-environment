@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -12,16 +12,17 @@ const Register = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [loading, setLoading] = useState(false); // Loading state
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' }); // clear error on typing
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 characters, with letters and numbers
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     if (!form.fullName.trim()) newErrors.fullName = 'Full name is required.';
     if (!form.username.trim()) newErrors.username = 'Username is required.';
@@ -42,9 +43,12 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      alert('Registered successfully!');
-      // Redirect to login page after successful registration
-      navigate('/login'); // Navigate to the login page
+      setLoading(true); // Start loading
+      setTimeout(() => {
+        // Simulate registration delay
+        setLoading(false); // End loading
+        navigate('/login'); // Redirect to login page after successful registration
+      }, 2000); // Simulate delay (2 seconds)
     }
   };
 
@@ -142,8 +146,13 @@ const Register = () => {
             <button
               type="submit"
               className="w-60 bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
+              disabled={loading} // Disable the button while loading
             >
-              Register
+              {loading ? (
+                <span className="animate-spin">Loading...</span> // Show loading text
+              ) : (
+                'Register'
+              )}
             </button>
           </div>
         </form>

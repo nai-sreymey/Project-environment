@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false); // New state for success message
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -23,8 +24,8 @@ const ForgotPassword = () => {
       setError('Please enter a valid email.');
     } else {
       // Proceed with password reset (send email or call API)
-      alert('Password reset email sent!');
-      // You can replace the alert with backend logic here.
+      setSuccess(true); // Set success state to true
+      setError(''); // Clear any previous errors
     }
   };
 
@@ -41,24 +42,34 @@ const ForgotPassword = () => {
       <div className="bg-black bg-opacity-30 p-16 rounded-xl shadow-md w-full max-w-sm">
         <h2 className="text-3xl font-semibold text-white text-center mb-6">Forgot Password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={handleChange}
-              className={inputClass()}
-            />
-            {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
-          </div>
+          {!success ? (
+            <>
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={handleChange}
+                  className={inputClass()}
+                />
+                {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+              </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
-          >
-            Send Password Reset Email
-          </button>
+              <button
+                type="submit"
+                className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
+              >
+                Send Password Reset Email
+              </button>
+            </>
+          ) : (
+            // Success message after email is sent
+            <div className="text-center text-white">
+              <p className="text-lg mb-4">A password reset link has been sent to your email!</p>
+              <p>Please follow the link in your email to set a new password.</p>
+            </div>
+          )}
         </form>
 
         <div className="mt-4 text-center">

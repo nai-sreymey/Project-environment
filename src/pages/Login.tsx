@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -8,6 +8,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,9 +37,13 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      alert('Logged in successfully!');
-      // Redirect to home page after successful login
-      navigate('/'); // Navigate to the home page
+      setLoading(true); // Set loading to true
+      setTimeout(() => {
+        // Simulate login process
+        localStorage.setItem('loginSuccess', 'Logged in successfully!');
+        setLoading(false); // Set loading to false after completion
+        navigate('/'); // Navigate to the home page after login
+      }, 2000); // Simulate a delay for login
     }
   };
 
@@ -82,13 +87,18 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
+            disabled={loading} // Disable button while loading
           >
-            Login
+            {loading ? (
+              <span className="animate-spin">Loading...</span> // Show loading text/spinner
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
         <div className="mt-4 text-center">
           <Link
-            to="/forgot-password" // Navigate to forgot password page
+            to="/forgot-password"
             className="text-sm text-white hover:text-green-400 underline"
           >
             Forgot Password?
@@ -96,7 +106,7 @@ const Login = () => {
         </div>
         <div className="mt-2 text-center">
           <Link
-            to="/register" // Use Link to navigate to the Register page
+            to="/register"
             className="text-sm text-white hover:text-green-400 underline"
           >
             Don't have an account? Register

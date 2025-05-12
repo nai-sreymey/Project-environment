@@ -24,7 +24,6 @@ const CreatePost: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Handle media change
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newMedia: MediaItem[] = files.map((file) => ({
@@ -34,15 +33,13 @@ const CreatePost: React.FC = () => {
     setMedia((prev) => [...prev, ...newMedia]);
   };
 
-  // Handle adding member by email
   const handleAddMember = () => {
     if (!newEmail.trim()) return;
-    const avatarUrl = "/images/mey.png"; // default avatar
+    const avatarUrl = "/images/mey.png";
     setMembers((prev) => [...prev, { email: newEmail.trim(), avatar: avatarUrl }]);
     setNewEmail("");
   };
 
-  // Handle slide link input
   const handleAddSlideLink = () => {
     const link = prompt("Please enter the slide link (e.g., Google Slides)");
     if (link && link.trim() !== "") {
@@ -50,7 +47,6 @@ const CreatePost: React.FC = () => {
     }
   };
 
-  // Submit handler
   const handleSubmit = () => {
     if (!canSubmit) return;
 
@@ -86,18 +82,16 @@ const CreatePost: React.FC = () => {
         </div>
       )}
 
-     {submitted && (
-      <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center text-gray-800 z-50 transition-opacity duration-500">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-semibold text-green-700">Waiting for Teacher's Approval</h2>
-          <p className="text-lg">Your post has been submitted and is currently under review.</p>
-          <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-gray-500">Redirecting in a few seconds...</p>
+      {submitted && (
+        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center text-gray-800 z-50 transition-opacity duration-500">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-semibold text-green-700">Waiting for Teacher's Approval</h2>
+            <p className="text-lg">Your post has been submitted and is currently under review.</p>
+            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-gray-500">Redirecting in a few seconds...</p>
+          </div>
         </div>
-      </div>
-    )}
-    
-      
+      )}
 
       <Header />
 
@@ -211,7 +205,7 @@ const CreatePost: React.FC = () => {
         </div>
 
         {/* Media Preview */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {media.map((item, index) => (
             <div key={index} className="border rounded overflow-hidden">
               {item.type === "image" ? (
