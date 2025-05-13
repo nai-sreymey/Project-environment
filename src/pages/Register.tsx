@@ -3,16 +3,14 @@ import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [form, setForm] = useState({
-    fullName: '',
     username: '',
     email: '',
-    phone: '',
     password: '',
     confirmPassword: '',
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,33 +20,50 @@ const Register = () => {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-    if (!form.fullName.trim()) newErrors.fullName = 'Full name is required.';
     if (!form.username.trim()) newErrors.username = 'Username is required.';
     if (!form.email.includes('@')) newErrors.email = 'Enter a valid email.';
-    if (!form.phone.trim()) newErrors.phone = 'Phone number is required.';
-    else if (!/^\d+$/.test(form.phone)) newErrors.phone = 'Phone number must contain only digits.';
-    if (!form.password) newErrors.password = 'Password is required.';
-    else if (!passwordRegex.test(form.password)) {
-      newErrors.password = 'Password must be at least 8 characters long and contain both letters and numbers.';
+    if (!form.password) {
+      newErrors.password = 'Password is required.';
+    } else if (form.password.length < 9) {
+      newErrors.password = 'Password must be more than 8 characters.';
     }
-    if (form.password !== form.confirmPassword)
+    if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match.';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      setLoading(true); // Start loading
-      setTimeout(() => {
-        // Simulate registration delay
-        setLoading(false); // End loading
-        navigate('/login'); // Redirect to login page after successful registration
-      }, 2000); // Simulate delay (2 seconds)
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:1337/api/auth/local/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: form.username,
+            email: form.email,
+            password: form.password,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          navigate('/login');
+        } else {
+          setErrors({ general: data.message || 'An error occurred. Please try again.' });
+        }
+      } catch (error) {
+        setErrors({ general: 'Network error. Please try again.' });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -62,21 +77,9 @@ const Register = () => {
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: "url('/background.png')" }}
     >
-      <div className="bg-black bg-opacity-30 p-10 rounded-xl shadow-md w-full max-w-3xl">
+      <div className="bg-black bg-opacity-30 p-10 rounded-xl shadow-md w-full max-w-2xl">
         <h2 className="text-4xl font-semibold text-white text-center mb-8">Register</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Full Name"
-              value={form.fullName}
-              onChange={handleChange}
-              className={inputClass('fullName')}
-            />
-            {errors.fullName && <p className="text-red-400 text-sm">{errors.fullName}</p>}
-          </div>
-
           <div>
             <input
               type="text"
@@ -99,21 +102,6 @@ const Register = () => {
               className={inputClass('email')}
             />
             {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
-          </div>
-
-          <div>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              value={form.phone}
-              onChange={handleChange}
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) e.preventDefault();
-              }}
-              className={inputClass('phone')}
-            />
-            {errors.phone && <p className="text-red-400 text-sm">{errors.phone}</p>}
           </div>
 
           <div>
@@ -142,14 +130,18 @@ const Register = () => {
             )}
           </div>
 
+          {errors.general && (
+            <p className="text-red-500 text-center md:col-span-2">{errors.general}</p>
+          )}
+
           <div className="md:col-span-2 flex justify-center mt-4">
             <button
               type="submit"
               className="w-60 bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
-              disabled={loading} // Disable the button while loading
+              disabled={loading}
             >
               {loading ? (
-                <span className="animate-spin">Loading...</span> // Show loading text
+                <span className="animate-spin">Loading...</span>
               ) : (
                 'Register'
               )}

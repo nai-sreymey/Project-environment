@@ -2,23 +2,20 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
-
+  const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false); // Loading state
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: '' });
+    setApiError('');
   };
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     if (!form.email.includes('@')) {
       newErrors.email = 'Please enter a valid email.';
@@ -26,24 +23,48 @@ const Login = () => {
 
     if (!form.password) {
       newErrors.password = 'Password is required.';
-    } else if (!passwordRegex.test(form.password)) {
-      newErrors.password = 'Password must be at least 8 characters, include a letter and a number.';
+    } else if (form.password.length < 9) {
+      newErrors.password = 'Password must be more than 8 characters.';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      setLoading(true); // Set loading to true
-      setTimeout(() => {
-        // Simulate login process
-        localStorage.setItem('loginSuccess', 'Logged in successfully!');
-        setLoading(false); // Set loading to false after completion
-        navigate('/'); // Navigate to the home page after login
-      }, 2000); // Simulate a delay for login
+    if (!validate()) return;
+
+    setLoading(true);
+    setApiError('');
+
+    try {
+      const response = await fetch('http://localhost:1337/api/auth/local', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identifier: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error?.message === 'Invalid identifier or password') {
+          setApiError('Account not found or wrong password. Please register first.');
+        } else {
+          setApiError('An error occurred. Please try again.');
+        }
+      } else {
+        localStorage.setItem('userEmail', data.user.email);
+        localStorage.setItem('jwt', data.jwt);
+        navigate('/');
+      }
+    } catch (err) {
+      setApiError('Failed to connect to server.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,6 +80,9 @@ const Login = () => {
     >
       <div className="bg-black bg-opacity-30 p-16 rounded-xl shadow-md w-full max-w-sm">
         <h2 className="text-3xl font-semibold text-white text-center mb-6">Login</h2>
+
+        {apiError && <p className="text-red-400 text-sm mb-4 text-center">{apiError}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -87,15 +111,16 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? (
-              <span className="animate-spin">Loading...</span> // Show loading text/spinner
+              <span className="animate-spin">Loading...</span>
             ) : (
               'Login'
             )}
           </button>
         </form>
+
         <div className="mt-4 text-center">
           <Link
             to="/forgot-password"
@@ -104,6 +129,7 @@ const Login = () => {
             Forgot Password?
           </Link>
         </div>
+
         <div className="mt-2 text-center">
           <Link
             to="/register"
