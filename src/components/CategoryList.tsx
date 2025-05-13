@@ -22,7 +22,7 @@ const CategoryList = () => {
       } else {
         navigate('/post'); // You can change to /login if needed
       }
-    }, 700); // 2 seconds delay
+    }, 2000); // 2 seconds delay
   };
 
   return (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus, Upload, Users, FileText, Send } from "lucide-react";
 import Header from "../components/Header";
 
 interface MediaItem {
@@ -14,7 +15,9 @@ interface Member {
 
 const CreatePost: React.FC = () => {
   const navigate = useNavigate();
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [fullDescription, setFullDescription] = useState("");
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [slideLinks, setSlideLinks] = useState<string[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
@@ -49,7 +52,6 @@ const CreatePost: React.FC = () => {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -61,32 +63,43 @@ const CreatePost: React.FC = () => {
     }, 1500);
   };
 
-  const canSubmit = description.trim() !== "" && category !== "" && media.length > 0;
+  const canSubmit =
+    title.trim() && shortDescription.trim() && fullDescription.trim() && category && media.length > 0;
 
   useEffect(() => {
     if (submitted) {
-      setTimeout(() => {
-        navigate("/");
-      }, 5000);
+      setTimeout(() => navigate("/"), 5000);
     }
   }, [submitted, navigate]);
 
+  const autoGrow = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
   return (
-    <div className="min-h-screen bg-green-100 font-sans text-lg relative">
+    <div
+      className="min-h-screen bg-green-50 font-sans relative"
+      style={{
+        backgroundImage: 'url("/bg.jpg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center text-white z-50">
-          <div className="text-center animate-pulse">
-            <h2 className="text-3xl font-semibold">Submitting...</h2>
-            <div className="mt-4 spinner"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="text-center animate-pulse text-white">
+            <h2 className="text-3xl font-bold mb-4">Submitting...</h2>
+            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         </div>
       )}
 
       {submitted && (
-        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center text-gray-800 z-50 transition-opacity duration-500">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl font-semibold text-green-700">Waiting for Teacher's Approval</h2>
-            <p className="text-lg">Your post has been submitted and is currently under review.</p>
+        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+          <div className="text-center text-gray-800 space-y-4">
+            <h2 className="text-3xl font-bold text-green-700">Waiting for Teacher's Approval</h2>
+            <p>Your post has been submitted and is under review.</p>
             <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm text-gray-500">Redirecting in a few seconds...</p>
           </div>
@@ -95,84 +108,102 @@ const CreatePost: React.FC = () => {
 
       <Header />
 
-      <div className="max-w-3xl mx-auto py-10 px-4 text-center">
-        {/* Members */}
-        <div className="flex items-center justify-center gap-4 mb-6 flex-wrap">
-          {members.slice(0, 4).map((member, index) => (
+      {/* Title Added Here */}
+      <h1 className="text-4xl font-bold text-center text-green-700 my-12">
+        Create Project
+      </h1>
+
+      <div className="max-w-4xl mx-auto my-12 bg-white/10 rounded-xl p-8 shadow-xl backdrop-blur-sm">
+        {/* Member Avatars */}
+        <div className="">
+          {members.slice(0, 4).map((member, idx) => (
             <img
-              key={index}
+              key={idx}
               src={member.avatar}
-              alt="member"
-              className="w-16 h-16 rounded-full border"
+              className="w-14 h-14 rounded-full border border-green-400 shadow"
+              alt="avatar"
             />
           ))}
           {members.length > 4 && (
-            <div className="w-16 h-16 rounded-full border flex items-center justify-center bg-white">
+            <div className="w-14 h-14 rounded-full border flex items-center justify-center bg-green-100 font-bold text-green-600">
               +{members.length - 4}
             </div>
           )}
         </div>
 
-        {/* Add Member */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <input
-            type="email"
-            placeholder="Enter member email"
-            className="border border-green-300 rounded px-3 py-2"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-          />
-          <button
-            onClick={handleAddMember}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            + Add Member
-          </button>
-        </div>
-
-        {/* Project Title */}
-        <h2 className="text-2xl font-semibold">Project Title</h2>
-        <h1 className="text-3xl font-bold italic mb-6">
-          “Urban Wildlife Garden for Biodiversity”
-        </h1>
+        {/* Title Input */}
+        <input
+          type="text"
+          maxLength={60}
+          placeholder="Enter your project title..."
+          className="w-full p-4 text-xl border border-green-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-green-400"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
         {/* Short Description */}
-        <p className="mb-6 text-xl font-medium">
-          <span className="font-semibold">Short Description:</span> Creating a native-plant wildlife garden in the city to attract pollinators, birds, and insects, supporting local biodiversity and community awareness.
-        </p>
+        <textarea
+          placeholder="Short description..."
+          maxLength={150}
+          className="w-full p-4 mb-4 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 resize-none overflow-hidden"
+          value={shortDescription}
+          onChange={(e) => {
+            setShortDescription(e.target.value);
+            autoGrow(e);
+          }}
+          rows={1}
+        />
 
         {/* Full Description */}
-        <div className="mb-8 border rounded-md border-green-400 bg-white shadow p-8 text-left">
-          <label className="block mb-4 text-xl font-bold text-green-700">
-            Full Project Description
-          </label>
-          <textarea
-            className="w-full p-4 border border-green-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
-            placeholder="Write your project description..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ minHeight: "160px" }}
-          />
-        </div>
+        <textarea
+          placeholder="Full project description..."
+          className="w-full p-4 mb-6 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 resize-none overflow-hidden"
+          value={fullDescription}
+          onChange={(e) => {
+            setFullDescription(e.target.value);
+            autoGrow(e);
+          }}
+          rows={3}
+        />
 
-        {/* Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
+        {/* Controls */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex gap-2">
+            <input
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              placeholder="Enter member email"
+              className="border border-green-300 p-2 rounded-md focus:outline-none"
+            />
+            <button
+              onClick={handleAddMember}
+              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            >
+              <Users size={16} /> Add Member
+            </button>
+          </div>
+
           <select
-            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
           >
             <option value="">Select Category</option>
-            <option>Environment</option>
-            <option>Wildlife</option>
-            <option>Community</option>
+            <option value="Energy">Energy</option>
+            <option value="Food">Food</option>
+            <option value="Biodiversity">Biodiversity</option>
+            <option value="Water">Water</option>
+            <option value="Others">Others</option>
+
+
           </select>
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
           >
-            Photo and Video
+            <Upload size={16} /> Upload Media
           </button>
 
           <input
@@ -186,49 +217,49 @@ const CreatePost: React.FC = () => {
 
           <button
             onClick={handleAddSlideLink}
-            className="bg-green-400 text-white px-6 py-3 text-lg rounded hover:bg-green-500"
+            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
           >
-            Slide
+            <FileText size={16} /> Add Slide
           </button>
 
           <button
-            onClick={handleSubmit}
             disabled={!canSubmit}
-            className={`px-6 py-3 text-lg rounded ${
-              canSubmit
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            onClick={handleSubmit}
+            className={`flex items-center gap-2 px-6 py-2 rounded-md text-white transition ${
+              canSubmit ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
             }`}
           >
-            Submit
+            <Send size={16} /> Submit
           </button>
         </div>
 
         {/* Media Preview */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {media.map((item, index) => (
-            <div key={index} className="border rounded overflow-hidden">
-              {item.type === "image" ? (
-                <img src={item.url} alt="media" className="w-full h-40 object-cover" />
-              ) : (
-                <video src={item.url} controls className="w-full h-40 object-cover" />
-              )}
-            </div>
-          ))}
-        </div>
+        {media.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            {media.map((item, index) => (
+              <div key={index} className="rounded-lg overflow-hidden border shadow-sm">
+                {item.type === "image" ? (
+                  <img src={item.url} className="w-full h-40 object-cover" alt="media" />
+                ) : (
+                  <video src={item.url} controls className="w-full h-40 object-cover" />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Slide Links Preview */}
         {slideLinks.length > 0 && (
-          <div className="mt-10 text-left">
+          <div className="text-left mt-6">
             <h3 className="text-xl font-semibold mb-2">Slide Links</h3>
-            <ul className="list-disc pl-6">
+            <ul className="list-disc list-inside text-blue-600">
               {slideLinks.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 underline hover:text-blue-800"
+                    className="underline hover:text-blue-800"
                   >
                     Slide {index + 1}
                   </a>

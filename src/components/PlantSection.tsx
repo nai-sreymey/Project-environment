@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card';
 
 // Sample data with different categories
@@ -25,75 +25,102 @@ const allPlantData = [
     title: "Water Lily",
     image: "/images/waterlily.png",
     description: "Improves water quality.",
-    category: "Water Filter"
+    category: "Water"
   },
   {
     title: "Water Reed",
     image: "/images/waterreed.png",
     description: "Used in water purification.",
-    category: "Water Filter"
+    category: "Water"
   },
   {
     title: "Desert Plant",
     image: "/images/desertplant.png",
     description: "Adapted for dry conditions.",
-    category: "Desert"
+    category: "Others"
   },
   {
     title: "Cactus",
     image: "/images/cactus.png",
     description: "Stores water in desert climates.",
-    category: "Desert"
+    category: "Others"
   },
   {
     title: "Tropical Orchid",
     image: "/images/orchid.png",
     description: "Colorful flowers in tropical environments.",
-    category: "Tropical"
+    category: "Food"
   },
   {
     title: "Tropical Palm",
     image: "/images/palm.png",
     description: "Common in tropical areas.",
-    category: "Tropical"
+    category: "Food"
   },
   {
     title: "Water Fern",
     image: "/images/waterfern.png",
     description: "Grows well in waterlogged soils.",
-    category: "Wetland"
+    category: "Water"
   },
   {
     title: "Mangrove",
     image: "/images/mangrove.png",
     description: "Common in coastal wetlands.",
-    category: "Wetland"
+    category: "Water"
   },
   {
     title: "Forest Pine",
     image: "/images/pine.png",
     description: "Grows in temperate forests.",
-    category: "Forest"
+    category: "Others"
   },
   {
     title: "Redwood",
     image: "/images/redwood.png",
     description: "Tall trees of temperate forests.",
-    category: "Forest"
+    category: "Others"
   },
+  // Adding plants under Energy category
+  {
+    title: "Solar Tree",
+    image: "/images/solar_tree.png",
+    description: "Generates solar power from its leaves.",
+    category: "Energy"
+  },
+  {
+    title: "Wind Flower",
+    image: "/images/windflower.png",
+    description: "Harnesses wind energy for sustainable power.",
+    category: "Energy"
+  }
 ];
 
 const categories = [
-  'All', 'Biodiversity', 'Water Filter', 'Desert', 'Tropical', 'Wetland', 'Forest'
+  'All', 'Biodiversity', 'Water', 'Food', 'Energy', 'Others'
 ];
 
 const PlantSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Filter plants based on selected category
   const filteredPlants = selectedCategory === 'All'
     ? allPlantData
     : allPlantData.filter(plant => plant.category === selectedCategory);
+
+  useEffect(() => {
+    // Simulate loading state when category is changed
+    setLoading(true);
+
+    // Set a timeout to simulate an API call or filtering delay
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500); // Adjust this time as needed to simulate loading
+
+    // Cleanup the timer if the component unmounts or category changes before the timeout is finished
+    return () => clearTimeout(timer);
+  }, [selectedCategory]);
 
   return (
     <section className="p-6 bg-green-50">
@@ -117,12 +144,19 @@ const PlantSection: React.FC = () => {
         <a href="#" className="text-green-600 hover:underline">See All</a>
       </div>
 
-      {/* Display filtered plants */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center max-w-6xl mx-auto">
-        {filteredPlants.map((plant, index) => (
-          <Card id={''} key={index} {...plant} />
-        ))}
-      </div>
+      {/* Loading indicator */}
+      {loading ? (
+        <div className="flex justify-center items-center mb-6">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-600"></div>
+        </div>
+      ) : (
+        // Display filtered plants
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-items-center max-w-6xl mx-auto">
+          {filteredPlants.map((plant, index) => (
+            <Card id={''} key={index} {...plant} />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
