@@ -1,74 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
-import axios from "axios";
 
 const ProfilePage = () => {
-  const [bio, setBio] = useState<string>("");
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [bio, setBio] = useState("I am a passionate full-stack developer.");
+  const [profileImage, setProfileImage] = useState("/images/profile.png");
   const [isEditing, setIsEditing] = useState(false);
-  const [tempBio, setTempBio] = useState<string>("");
+  const [tempBio, setTempBio] = useState(bio);
   const [newImage, setNewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
-  // Assuming the user's token is stored in localStorage after login
-  const token = localStorage.getItem("authToken"); 
 
-  // Fetch profile data on component mount
-  useEffect(() => {
-    if (token) {
-      axios
-        .get("http://localhost:1337/api/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((response) => {
-          const userProfile = response.data;
-          setBio(userProfile.bio);
-          setProfileImage(userProfile.profileImage);
-          setTempBio(userProfile.bio);
-        })
-        .catch((error) => {
-          console.error("Error fetching user profile:", error);
-        });
-    }
-  }, [token]);
+  // Get values from localStorage
+  const username = localStorage.getItem("username") || "Your Name";
+  const email = localStorage.getItem("userEmail") || "your@email.com";
 
   const handleEditClick = () => {
     setIsEditing(true);
     setTempBio(bio);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = () => {
     setLoading(true);
-    try {
-      const formData = new FormData();
-      if (newImage) {
-        formData.append("image", newImage);
-      }
-      formData.append("bio", tempBio);
 
-      const response = await axios.put(
-        "http://localhost:1337/api/profile",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // Attach the token here
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        setBio(tempBio);
-        if (newImage) setProfileImage(newImage);
-        alert("Profile updated successfully!");
-      }
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      alert("There was an error saving your profile. Please try again.");
-    } finally {
-      setLoading(false);
+    setTimeout(() => {
+      setBio(tempBio);
+      if (newImage) setProfileImage(newImage);
       setIsEditing(false);
-    }
+      setLoading(false);
+      alert("Profile updated successfully!");
+    }, 1000); // Simulate delay
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,13 +41,12 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-green-100">
       <Header />
-
       <div className="flex justify-center items-center py-20 px-6">
         <div className="bg-white rounded-2xl shadow-2xl p-12 w-full max-w-3xl text-center min-h-[700px] flex flex-col justify-between">
           <div>
             <div className="relative">
               <img
-                src={newImage || profileImage || "/images/default.png"}
+                src={newImage || profileImage}
                 alt="Profile"
                 className="w-40 h-40 rounded-full mx-auto mb-6 object-cover border-4 border-green-400"
               />
@@ -111,13 +69,10 @@ const ProfilePage = () => {
               )}
             </div>
 
-            <h2 className="text-3xl font-extrabold text-green-800 mb-1">Nai Sreymey</h2>
-            <p className="text-lg text-gray-600 mb-6">Full-Stack Developer | Phnom Penh</p>
+            <h2 className="text-3xl font-extrabold text-green-800 mb-1">{username}</h2>
 
             <div className="text-left space-y-4 text-lg text-gray-800">
-              <p>
-                <strong>Email:</strong> nai.sreymey@example.com
-              </p>
+              <p><strong>Email:</strong> {email}</p>
               <div>
                 <strong>Bio:</strong>
                 {isEditing ? (
@@ -137,7 +92,7 @@ const ProfilePage = () => {
           <div>
             {loading ? (
               <button
-                className="mt-10 px-8 py-3 bg-green-600 text-white text-lg font-semibold rounded-full hover:bg-green-700"
+                className="mt-10 px-8 py-3 bg-green-600 text-white text-lg font-semibold rounded-full"
                 disabled
               >
                 Saving...

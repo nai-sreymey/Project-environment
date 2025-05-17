@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -11,6 +10,7 @@ import CategoryList from './components/CategoryList';
 import AboutUs from "./pages/About";
 import EventPage from "./pages/Event";
 import ProfilePage from "./pages/Profile";
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -19,7 +19,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/category" element={<Category />} />
         <Route path="/detail" element={<Detail />} />
         <Route path="/post" element={<CreatePost />} />
@@ -27,7 +26,8 @@ function App() {
         <Route path="/about" element={<AboutUs />} />     
         <Route path="/event" element={<EventPage />} />     
         <Route path="/profile" element={<ProfilePage />} />  
-           
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />           
 
 
 

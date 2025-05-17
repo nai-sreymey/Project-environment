@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false); // New state for success message
+  const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    setError(''); // Clear error when user types
+    setError('');
   };
 
   const validateEmail = (email: string) => {
@@ -16,16 +17,37 @@ const ForgotPassword = () => {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!email) {
       setError('Please enter your email.');
-    } else if (!validateEmail(email)) {
+      return;
+    }
+    if (!validateEmail(email)) {
       setError('Please enter a valid email.');
-    } else {
-      // Proceed with password reset (send email or call API)
-      setSuccess(true); // Set success state to true
-      setError(''); // Clear any previous errors
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // **Simulated API request:**
+      // Instead of real API, we fake a reset token and delay
+
+      await new Promise((r) => setTimeout(r, 1000)); // wait 1s
+
+      // Fake reset token:
+      const fakeResetToken = '123456abcdef';
+
+      // Navigate to reset password page with token in URL
+      navigate(`/reset-password?code=${fakeResetToken}`);
+
+    } catch (err) {
+      setError('Failed to connect to server.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,34 +64,25 @@ const ForgotPassword = () => {
       <div className="bg-black bg-opacity-30 p-16 rounded-xl shadow-md w-full max-w-sm">
         <h2 className="text-3xl font-semibold text-white text-center mb-6">Forgot Password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!success ? (
-            <>
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={handleChange}
-                  className={inputClass()}
-                />
-                {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
-              </div>
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={handleChange}
+              className={inputClass()}
+            />
+            {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+          </div>
 
-              <button
-                type="submit"
-                className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
-              >
-                Send Password Reset Email
-              </button>
-            </>
-          ) : (
-            // Success message after email is sent
-            <div className="text-center text-white">
-              <p className="text-lg mb-4">A password reset link has been sent to your email!</p>
-              <p>Please follow the link in your email to set a new password.</p>
-            </div>
-          )}
+          <button
+            type="submit"
+            className="w-full bg-green-500 text-white py-2 rounded-md font-semibold hover:bg-green-600"
+            disabled={loading}
+          >
+            {loading ? 'Sending...' : 'Send Password Reset Email'}
+          </button>
         </form>
 
         <div className="mt-4 text-center">

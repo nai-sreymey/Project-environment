@@ -10,24 +10,21 @@ const CategoryList = () => {
   const navigate = useNavigate();
 
   const visibleCategories = showAll ? categories : categories.slice(0, 8);
-  const isAuthenticated = !!localStorage.getItem("userToken");
+  const isAuthenticated = !!localStorage.getItem("jwt"); // Check JWT for login
 
   const handleCreateProject = () => {
-    setLoading(true); // Show loading spinner
-
-    // Wait 2 seconds, then navigate
+    setLoading(true);
     setTimeout(() => {
       if (isAuthenticated) {
-        navigate('/post');
+        navigate("/post"); // Go to post if logged in
       } else {
-        navigate('/post'); // You can change to /login if needed
+        navigate("/login"); // Go to login if not logged in
       }
-    }, 2000); // 2 seconds delay
+    }, 700);
   };
 
   return (
     <>
-      {/* Full Screen Loading Spinner */}
       {loading && (
         <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center z-50">
           <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
@@ -39,7 +36,9 @@ const CategoryList = () => {
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-gray-100 p-4 rounded-xl shadow-md">
           <button
             onClick={handleCreateProject}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-md mb-4 sm:mb-0"
+            className={`${
+              isAuthenticated ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 hover:bg-gray-500"
+            } text-white font-semibold px-4 py-2 rounded-lg shadow-md mb-4 sm:mb-0`}
           >
             Create Project +
           </button>

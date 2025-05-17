@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Upload, Users, FileText, Send } from "lucide-react";
+import { Plus, Upload, Users, FileText } from "lucide-react";
 import Header from "../components/Header";
 
 interface MediaItem {
@@ -15,17 +15,28 @@ interface Member {
 
 const CreatePost: React.FC = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [title, setTitle] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
-  const [fullDescription, setFullDescription] = useState("");
+  const [short_description, setshort_description] = useState("");
+  const [content, setcontent] = useState("");
+  const [category, setCategory] = useState("");
   const [media, setMedia] = useState<MediaItem[]>([]);
-  const [slideLinks, setSlideLinks] = useState<string[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [newEmail, setNewEmail] = useState("");
-  const [category, setCategory] = useState("");
+  const [slideLinks, setSlideLinks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const canSubmit =
+    title.trim() &&
+    short_description.trim() &&
+    content.trim() &&
+    category &&
+    media.length > 0;
+
+  // Validate email format
+  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -37,40 +48,65 @@ const CreatePost: React.FC = () => {
   };
 
   const handleAddMember = () => {
-    if (!newEmail.trim()) return;
-    const avatarUrl = "/images/mey.png";
-    setMembers((prev) => [...prev, { email: newEmail.trim(), avatar: avatarUrl }]);
+    if (!newEmail.trim()) return alert("Email is required.");
+    if (!isValidEmail(newEmail)) return alert("Invalid email address.");
+
+    setMembers((prev) => [
+      ...prev,
+      { email: newEmail.trim(), avatar: "/images/mey.png" }
+    ]);
     setNewEmail("");
   };
 
   const handleAddSlideLink = () => {
-    const link = prompt("Please enter the slide link (e.g., Google Slides)");
-    if (link && link.trim() !== "") {
+    const link = prompt("Enter Slide Link (e.g. Google Slides)");
+    if (link && link.trim()) {
       setSlideLinks((prev) => [...prev, link.trim()]);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) return;
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+
+    const payload = {
+      data: {
+        title,
+        short_description,
+        content,
+        category,
+        slideLinks,
+        media,
+        members,
+      }
+    };
+
+    try {
+      const res = await fetch("http://localhost:1337/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData?.error?.message || "Failed to create project");
+      }
+
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         navigate("/");
       }, 5000);
-    }, 1500);
-  };
-
-  const canSubmit =
-    title.trim() && shortDescription.trim() && fullDescription.trim() && category && media.length > 0;
-
-  useEffect(() => {
-    if (submitted) {
-      setTimeout(() => navigate("/"), 5000);
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    } finally {
+      setIsLoading(false);
     }
-  }, [submitted, navigate]);
+  };
 
   const autoGrow = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -87,187 +123,167 @@ const CreatePost: React.FC = () => {
       }}
     >
       {isLoading && (
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="text-center animate-pulse text-white">
-            <h2 className="text-3xl font-bold mb-4">Submitting...</h2>
-            <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
-          </div>
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="text-white text-xl animate-pulse">Submitting...</div>
         </div>
       )}
 
       {submitted && (
-        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
-          <div className="text-center text-gray-800 space-y-4">
-            <h2 className="text-3xl font-bold text-green-700">Waiting for Teacher's Approval</h2>
-            <p>Your post has been submitted and is under review.</p>
-            <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-gray-500">Redirecting in a few seconds...</p>
-          </div>
+        <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50">
+          <h2 className="text-3xl font-bold text-green-600">Waiting for Teacher's Approval</h2>
+          <p className="mt-2 text-gray-700">Your post has been submitted.</p>
+          <div className="mt-4 w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm mt-2 text-gray-500">Redirecting in a few seconds...</p>
         </div>
       )}
 
       <Header />
 
-      {/* Title Added Here */}
-      <h1 className="text-4xl font-bold text-center text-green-700 my-12">
-        Create Project
-      </h1>
+      <h1 className="text-4xl font-bold text-center text-green-700 my-12">Create Project</h1>
 
-      <div className="max-w-4xl mx-auto my-12 bg-white/10 rounded-xl p-8 shadow-xl backdrop-blur-sm">
-        {/* Member Avatars */}
-        <div className="">
-          {members.slice(0, 4).map((member, idx) => (
+      <div className="max-w-4xl mx-auto p-8 bg-white/20 rounded-xl shadow-lg backdrop-blur-md">
+        {/* Members */}
+        <div className="flex space-x-2 mb-6">
+          {members.slice(0, 4).map((m, i) => (
             <img
-              key={idx}
-              src={member.avatar}
-              className="w-14 h-14 rounded-full border border-green-400 shadow"
+              key={i}
+              src={m.avatar}
+              className="w-12 h-12 rounded-full border border-green-400 shadow"
               alt="avatar"
             />
           ))}
           {members.length > 4 && (
-            <div className="w-14 h-14 rounded-full border flex items-center justify-center bg-green-100 font-bold text-green-600">
+            <div className="w-12 h-12 rounded-full bg-green-200 text-green-800 flex items-center justify-center font-bold">
               +{members.length - 4}
             </div>
           )}
         </div>
 
-        {/* Title Input */}
+        {/* Form */}
         <input
           type="text"
-          maxLength={60}
-          placeholder="Enter your project title..."
-          className="w-full p-4 text-xl border border-green-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-green-400"
+          placeholder="Project Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          maxLength={60}
+          className="w-full mb-4 p-4 border border-green-300 rounded-md text-lg"
         />
 
-        {/* Short Description */}
         <textarea
-          placeholder="Short description..."
-          maxLength={150}
-          className="w-full p-4 mb-4 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 resize-none overflow-hidden"
-          value={shortDescription}
+          placeholder="Short Description"
+          value={short_description}
           onChange={(e) => {
-            setShortDescription(e.target.value);
+            setshort_description(e.target.value);
             autoGrow(e);
           }}
           rows={1}
+          maxLength={150}
+          className="w-full mb-4 p-4 border border-green-300 rounded-md resize-none overflow-hidden"
         />
 
-        {/* Full Description */}
         <textarea
-          placeholder="Full project description..."
-          className="w-full p-4 mb-6 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 resize-none overflow-hidden"
-          value={fullDescription}
+          placeholder="Full Description"
+          value={content}
           onChange={(e) => {
-            setFullDescription(e.target.value);
+            setcontent(e.target.value);
             autoGrow(e);
           }}
           rows={3}
+          className="w-full mb-4 p-4 border border-green-300 rounded-md resize-none overflow-hidden"
         />
 
-        {/* Controls */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              placeholder="Enter member email"
-              className="border border-green-300 p-2 rounded-md focus:outline-none"
-            />
-            <button
-              onClick={handleAddMember}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-            >
-              <Users size={16} /> Add Member
-            </button>
-          </div>
+        {/* Inputs */}
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          <input
+            type="email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder="Member email"
+            className="p-2 border border-green-300 rounded-md"
+          />
+          <button
+            onClick={handleAddMember}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2"
+          >
+            <Users size={16} /> Add Member
+          </button>
 
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded-md"
           >
             <option value="">Select Category</option>
-            <option value="Energy">Energy</option>
-            <option value="Food">Food</option>
-            <option value="Biodiversity">Biodiversity</option>
-            <option value="Water">Water</option>
-            <option value="Others">Others</option>
-
-
+            <option value="health">Health</option>
+            <option value="education">Education</option>
+            <option value="food">Food</option>
+            <option value="technology">Technology</option>
+            <option value="environment">Environment</option>
           </select>
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2"
           >
             <Upload size={16} /> Upload Media
           </button>
 
-          <input
-            type="file"
-            accept="image/*,video/*"
-            multiple
-            hidden
-            ref={fileInputRef}
-            onChange={handleMediaChange}
-          />
-
           <button
             onClick={handleAddSlideLink}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <FileText size={16} /> Add Slide
-          </button>
-
-          <button
-            disabled={!canSubmit}
-            onClick={handleSubmit}
-            className={`flex items-center gap-2 px-6 py-2 rounded-md text-white transition ${
-              canSubmit ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
-            }`}
-          >
-            <Send size={16} /> Submit
+            <FileText size={16} /> Add Slide Link
           </button>
         </div>
 
+        <input
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleMediaChange}
+        />
+
         {/* Media Preview */}
-        {media.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-            {media.map((item, index) => (
-              <div key={index} className="rounded-lg overflow-hidden border shadow-sm">
-                {item.type === "image" ? (
-                  <img src={item.url} className="w-full h-40 object-cover" alt="media" />
-                ) : (
-                  <video src={item.url} controls className="w-full h-40 object-cover" />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex gap-4 overflow-x-auto mb-6">
+          {media.map((m, i) =>
+            m.type === "image" ? (
+              <img
+                key={i}
+                src={m.url}
+                className="h-28 border border-green-300 rounded-md"
+                alt="preview"
+              />
+            ) : (
+              <video
+                key={i}
+                src={m.url}
+                className="h-28 border border-green-300 rounded-md"
+                controls
+              />
+            )
+          )}
+        </div>
 
         {/* Slide Links Preview */}
-        {slideLinks.length > 0 && (
-          <div className="text-left mt-6">
-            <h3 className="text-xl font-semibold mb-2">Slide Links</h3>
-            <ul className="list-disc list-inside text-blue-600">
-              {slideLinks.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-blue-800"
-                  >
-                    Slide {index + 1}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="flex gap-4 overflow-x-auto mb-6">
+          {slideLinks.map((link, i) => (
+            <a key={i} href={link} target="_blank" rel="noopener noreferrer" className="text-green-700 underline">
+              Slide {i + 1}
+            </a>
+          ))}
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={!canSubmit || isLoading}
+          className={`w-full py-3 text-white font-bold rounded-md ${
+            canSubmit ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"
+          }`}
+        >
+          Submit Project
+        </button>
       </div>
     </div>
   );
