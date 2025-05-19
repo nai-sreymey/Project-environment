@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 
 const ProfilePage = () => {
-  const [bio, setBio] = useState("I am a passionate full-stack developer.");
+  const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState("/images/profile.png");
   const [isEditing, setIsEditing] = useState(false);
   const [tempBio, setTempBio] = useState(bio);
