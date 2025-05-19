@@ -1,7 +1,9 @@
-import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { motion } from "framer-motion";
 
+// Card UI
 export const Card = ({
   children,
   className = "",
@@ -11,7 +13,7 @@ export const Card = ({
 }) => {
   return (
     <div
-      className={`rounded-xl bg-white p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}
+      className={`rounded-2xl bg-white p-6 shadow-md hover:shadow-2xl hover:scale-[1.02] transition-transform duration-300 border border-gray-200 ${className}`}
     >
       {children}
     </div>
@@ -25,137 +27,182 @@ export const CardContent = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return <div className={`mt-2 text-left ${className}`}>{children}</div>;
+  return <div className={`mt-2 text-left w-full ${className}`}>{children}</div>;
 };
+
+// Events Data
+const uniqueEvents = Array.from(
+  new Map(
+    [
+      {
+        title: "🌳 Tree Planting Event",
+        description:
+          "Trees are vital for our environment. We plant them on unused land to help improve air quality and provide beauty.",
+        date: "May 20, 2025",
+        time: "8:00 AM - 11:30 AM",
+        location: "Phnom Penh Community Park",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+      {
+        title: "🚫 Plastic-Free Challenge",
+        description:
+          "Can you go one week without plastic? Join our challenge and win eco-friendly prizes!",
+        date: "May 22–28, 2025",
+        time: "All Day",
+        location: "Online & Local Markets",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+      {
+        title: "🎨 Green Art Contest",
+        description:
+          "Express creativity using recycled materials. Show how you care for nature!",
+        date: "May 25, 2025",
+        time: "1:00 PM - 4:00 PM",
+        location: "PSE Art Center Hall",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+      {
+        title: "🏆 Eco Hero Awards",
+        description:
+          "We celebrate those who actively protect our planet—become our Eco Hero!",
+        date: "May 30, 2025",
+        time: "3:00 PM - 6:00 PM",
+        location: "PSE Auditorium",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+      {
+        title: "♻️ Recycling Workshop",
+        description:
+          "Learn how to recycle properly and reduce waste in your daily life.",
+        date: "June 2, 2025",
+        time: "10:00 AM - 1:00 PM",
+        location: "PSE Workshop Room",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+      {
+        title: "🧼 Community Clean-up Day",
+        description:
+          "Join hands to clean the streets and parks. Let’s keep our community clean and green!",
+        date: "June 5, 2025",
+        time: "7:00 AM - 12:00 PM",
+        location: "City Street Area",
+        image: "/images/trees.png",
+        createdBy: "Nai Sreymey",
+      },
+    ].map((e) => [e.title + e.date, e])
+  ).values()
+);
 
 const EventPage = () => {
   const navigate = useNavigate();
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [search, setSearch] = useState("");
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
+  const handleBackClick = () => navigate(-1);
+  const handleShowMore = () =>
+    setVisibleCount((prev) => Math.min(prev + 3, filteredEvents.length));
+
+  const filteredEvents = uniqueEvents.filter((event) =>
+    event.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="bg-green-100 min-h-screen text-center font-sans flex flex-col">
+    <div className="bg-green-50 min-h-screen text-center font-sans flex flex-col">
       <Header />
 
-      <section className="py-10 px-4 flex-grow">
-        <h2 className="text-4xl font-extrabold text-black">
-          Event PSE environment
+      {/* Back Button */}
+      <div className="absolute top-6 left-6 z-10">
+        <button
+          onClick={handleBackClick}
+          className="px-4 py-2 bg-gray-600 text-white rounded-full hover:bg-gray-800 transition duration-200"
+        >
+          ← Back
+        </button>
+      </div>
+
+      {/* Content Section */}
+      <section className="container mx-auto py-14 px-4 md:px-10 flex-grow">
+        <h2 className="text-4xl font-extrabold text-green-900">
+          🌿 PSE Environmental Events
         </h2>
-        <p className="text-green-800 text-lg mt-3">
-          🌱 Join us to help nature, make friends, and learn new things. Grow,
+        <p className="text-green-700 text-lg mt-3 max-w-2xl mx-auto">
+          Join us to help nature, make friends, and learn new things. Grow,
           share, and make a positive impact! 🌍
         </p>
 
-        <div className="max-w-5xl mx-auto mt-12 space-y-10">
-          {/* Tree Planting Event */}
-          <Card className="flex flex-col sm:flex-row items-center gap-6">
-            <img
-              src="/images/trees.png"
-              alt="Tree Planting Event"
-              className="w-40 h-40 object-cover rounded-xl"
-            />
-            <CardContent>
-              <h3 className="text-2xl font-bold text-green-800">
-                🌳 Tree Planting Event
-              </h3>
-              <p className="mt-2 text-gray-700">
-                Trees are vital for our environment. We plant them on unused
-                land to help improve air quality and provide beauty. Let's
-                contribute to a greener world!
-              </p>
-              <div className="mt-3 text-sm text-gray-600 space-y-1">
-                <p><strong>Date:</strong> May 20, 2025</p>
-                <p><strong>Time:</strong> 8:00 AM - 11:30 AM</p>
-                <p><strong>Location:</strong> Phnom Penh Community Park</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Plastic-Free Challenge */}
-          <Card className="flex flex-col sm:flex-row items-center gap-6">
-            <img
-              src="/images/trees.png"
-              alt="Plastic-Free Challenge"
-              className="w-40 h-40 object-cover rounded-xl"
-            />
-            <CardContent>
-              <h3 className="text-2xl font-bold text-green-800">
-                🚫 Plastic-Free Challenge
-              </h3>
-              <p className="mt-2 text-gray-700">
-                Can you go one week without plastic? Join our challenge, ditch
-                plastic straws, bottles, and bags. Eco-friendly prizes await the
-                winners!
-              </p>
-              <div className="mt-3 text-sm text-gray-600 space-y-1">
-                <p><strong>Date:</strong> May 22–28, 2025</p>
-                <p><strong>Time:</strong> All Day</p>
-                <p><strong>Location:</strong> Online & Local Markets</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Green Art Contest */}
-          <Card className="flex flex-col sm:flex-row items-center gap-6">
-            <img
-              src="/images/trees.png"
-              alt="Green Art Contest"
-              className="w-40 h-40 object-cover rounded-xl"
-            />
-            <CardContent>
-              <h3 className="text-2xl font-bold text-green-800">
-                🎨 Green Art Contest
-              </h3>
-              <p className="mt-2 text-gray-700">
-                Express your creativity to save the Earth! Submit art using
-                recycled materials. Show how you care for nature through your
-                talent!
-              </p>
-              <div className="mt-3 text-sm text-gray-600 space-y-1">
-                <p><strong>Date:</strong> May 25, 2025</p>
-                <p><strong>Time:</strong> 1:00 PM - 4:00 PM</p>
-                <p><strong>Location:</strong> PSE Art Center Hall</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Eco Hero Awards */}
-          <Card className="flex flex-col sm:flex-row items-center gap-6">
-            <img
-              src="/images/trees.png"
-              alt="Eco Hero Awards"
-              className="w-40 h-40 object-cover rounded-xl"
-            />
-            <CardContent>
-              <h3 className="text-2xl font-bold text-green-800">
-                🏆 Eco Hero Awards
-              </h3>
-              <p className="mt-2 text-gray-700">
-                We celebrate those who actively protect our planet! Whether it's
-                cleaning up, planting trees, or recycling—be our Eco Hero and
-                earn a certificate of recognition!
-              </p>
-              <div className="mt-3 text-sm text-gray-600 space-y-1">
-                <p><strong>Date:</strong> May 30, 2025</p>
-                <p><strong>Time:</strong> 3:00 PM - 6:00 PM</p>
-                <p><strong>Location:</strong> PSE Auditorium</p>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Search Bar */}
+        <div className="mt-8 mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search events..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full max-w-md px-5 py-3 rounded-full border border-green-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
         </div>
+
+        {/* Event Cards */}
+        <div className="grid gap-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+          {filteredEvents.slice(0, visibleCount).map((event, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <Card>
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-48 object-cover rounded-xl"
+                />
+                <CardContent>
+                  <h3 className="text-2xl font-bold text-green-900">
+                    {event.title}
+                  </h3>
+                  <hr className="my-2 border-green-200" />
+                  <p className="text-gray-600">{event.description}</p>
+                  <p className="mt-3 text-sm text-gray-500">
+                    📅 {event.date} | 🕒 {event.time}
+                  </p>
+                  <p className="text-sm text-gray-500">📍 {event.location}</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    👤 {event.createdBy}
+                  </p>
+                  <span className="inline-block mt-3 px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                    Environmental
+                  </span>
+                  <button className="block mt-4 px-5 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition duration-200">
+                    Join Now
+                  </button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Show More Button */}
+        {visibleCount < filteredEvents.length && (
+          <div className="mt-14 flex justify-center">
+            <button
+              onClick={handleShowMore}
+              className="px-8 py-4 text-lg bg-green-700 text-white font-semibold rounded-xl shadow-md hover:bg-green-800 transition-all duration-300"
+            >
+              Show More Events
+            </button>
+          </div>
+        )}
       </section>
 
-      {/* Back Button */}
-      <div className="mt-auto mb-6">
-        <button
-          onClick={handleBackClick}
-          className="px-6 py-3 bg-gray-400 text-white rounded-full hover:bg-gray-600"
-        >
-          Back
-        </button>
-      </div>
+      {/* Footer */}
+      <footer className="bg-green-900 text-white py-6 text-center text-sm mt-auto">
+        © 2025 PSE Environmental Events. All rights reserved.
+      </footer>
     </div>
   );
 };

@@ -64,12 +64,15 @@ const CategoryList = () => {
           </button>
         </div>
 
-        {/* Category Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
-          {visibleCategories.map((item) => (
-            <CategoryCard key={item.title + item.image} item={item} />
-          ))}
-        </div>
+{/* Category Cards */}
+<div className=" mx-auto ml-8 ">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+    {visibleCategories.map((item) => (
+      <CategoryCard key={item.title + item.image} item={item} />
+    ))}
+  </div>
+</div>
+
       </main>
     </>
   );

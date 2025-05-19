@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
+import Header from '../components/Header';
 const Detail: React.FC = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
@@ -10,6 +10,7 @@ const Detail: React.FC = () => {
   };
 
   return (
+    
     <section className="bg-green-50 text-black p-10 min-h-screen flex flex-col items-center">
       <h1 className="text-5xl font-extrabold mb-10">Biodiversity</h1>
 
