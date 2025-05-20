@@ -61,10 +61,10 @@ const Header = () => {
       )}
 
       <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className=" mx-auto px-32  py-4 flex items-center justify-between">
+        <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-32 py-4 flex items-center justify-between">
           {/* Logo */}
           <div
-            className=""
+            className="flex-shrink-0 cursor-pointer"
             onClick={() => navigateTo("/")}
             aria-label="Go to Home"
             role="link"
@@ -85,7 +85,7 @@ const Header = () => {
 
           {/* Navigation */}
           <nav
-            className="hidden md:flex items-center gap-x-4 px-5 py-2 rounded-full border border-gray-200 bg-white shadow-inner"
+            className="hidden md:flex items-center gap-x-4 px-4 py-2 rounded-full border border-gray-200 bg-white shadow-inner"
             aria-label="Primary Navigation"
           >
             {["Home", "About", "Category", "Event"].map((label) => {
@@ -95,7 +95,7 @@ const Header = () => {
                 <button
                   key={path}
                   onClick={() => navigateTo(path)}
-                  className={`text-sm font-semibold px-6 py-2 rounded-full transition
+                  className={`text-sm font-semibold px-4 py-2 rounded-full transition
                     duration-300 ease-in-out transform
                     ${
                       isActive(path)
@@ -112,7 +112,7 @@ const Header = () => {
           </nav>
 
           {/* Right side: User and Mobile Menu */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             {/* Desktop User Dropdown */}
             {isLoggedIn ? (
               <div className="relative hidden md:block" ref={dropdownRef}>
@@ -129,7 +129,7 @@ const Header = () => {
                     className="w-10 h-10 rounded-full border-2 border-green-600 shadow-sm object-cover"
                     draggable={false}
                   />
-                  <span className="uppercase tracking-wide select-none">
+                  <span className="uppercase tracking-wide select-none hidden sm:inline">
                     {user.name}
                   </span>
                 </button>

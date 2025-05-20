@@ -98,14 +98,26 @@ const uniqueEvents = Array.from(
   ).values()
 );
 
+
+
 const EventPage = () => {
   const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(3);
   const [search, setSearch] = useState("");
+  const [reactionMap, setReactionMap] = useState<Record<string, string>>({});
 
   const handleBackClick = () => navigate(-1);
-  const handleShowMore = () =>
+
+  const handleShowMore = () => {
     setVisibleCount((prev) => Math.min(prev + 3, filteredEvents.length));
+  };
+
+  const setReaction = (eventId: string, emoji: string) => {
+    setReactionMap((prev) => ({
+      ...prev,
+      [eventId]: prev[eventId] === emoji ? "" : emoji,
+    }));
+  };
 
   const filteredEvents = uniqueEvents.filter((event) =>
     event.title.toLowerCase().includes(search.toLowerCase())
@@ -148,42 +160,46 @@ const EventPage = () => {
 
         {/* Event Cards */}
         <div className="grid gap-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.slice(0, visibleCount).map((event, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <Card>
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-48 object-cover rounded-xl"
-                />
-                <CardContent>
-                  <h3 className="text-2xl font-bold text-green-900">
-                    {event.title}
-                  </h3>
-                  <hr className="my-2 border-green-200" />
-                  <p className="text-gray-600">{event.description}</p>
-                  <p className="mt-3 text-sm text-gray-500">
-                    📅 {event.date} | 🕒 {event.time}
-                  </p>
-                  <p className="text-sm text-gray-500">📍 {event.location}</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    👤 {event.createdBy}
-                  </p>
-                  <span className="inline-block mt-3 px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                    Environmental
-                  </span>
-                  <button className="block mt-4 px-5 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition duration-200">
-                    Join Now
-                  </button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+          {filteredEvents.slice(0, visibleCount).map((event, index) => {
+            const id = event.title + event.date;
+            const selectedEmoji = reactionMap[id] || "";
+
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <Card>
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full h-48 object-cover rounded-xl"
+                  />
+                  <CardContent>
+                    <h3 className="text-2xl font-bold text-green-900">
+                      {event.title}
+                    </h3>
+                    <hr className="my-2 border-green-200" />
+                    <p className="text-gray-600">{event.description}</p>
+                    <p className="mt-3 text-sm text-gray-500">
+                      📅 {event.date} | 🕒 {event.time}
+                    </p>
+                    <p className="text-sm text-gray-500">📍 {event.location}</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      👤 {event.createdBy}
+                    </p>
+                    <span className="inline-block mt-3 px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                      Environmental
+                    </span>
+
+                   
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Show More Button */}
@@ -191,7 +207,7 @@ const EventPage = () => {
           <div className="mt-14 flex justify-center">
             <button
               onClick={handleShowMore}
-              className="px-8 py-4 text-lg bg-green-700 text-white font-semibold rounded-xl shadow-md hover:bg-green-800 transition-all duration-300"
+              className="px-8 py-4 text-lg bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-800 transition-all duration-300"
             >
               Show More Events
             </button>
@@ -200,7 +216,7 @@ const EventPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-green-900 text-white py-6 text-center text-sm mt-auto">
+      <footer className="bg-green-700 text-white py-6 text-center text-sm mt-auto">
         © 2025 PSE Environmental Events. All rights reserved.
       </footer>
     </div>
