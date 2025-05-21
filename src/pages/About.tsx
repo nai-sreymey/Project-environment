@@ -21,7 +21,7 @@ export const CardContent = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AboutUs = () => {
-  const [activeSection, setActiveSection] = useState<string>('when');
+  const [activeSection, setActiveSection] = useState<string>('PSE At A GLANCE');
 
   const scrollToSection = (section: string) => {
     setActiveSection(section);
@@ -33,38 +33,38 @@ const AboutUs = () => {
 
   const sections = [
     {
-      id: 'when',
-      title: 'When',
+      id: 'PSE At A GLANCE',
+      title: 'PSE At A GLANCE',
       desc: 'We started our journey in 2022 with a simple but powerful dream. Our vision was to create a world where environmental sustainability and social impact are at the heart of every community. With a small team and a big idea, we took the first step towards building a better future for our planet. Over time, our passion for preserving nature grew stronger, and we started to partner with like-minded organizations to amplify our impact and reach more people in need of support.',
       img: '/images/trees.png',
     },
     {
-      id: 'education',
-      title: 'Education',
+      id: 'EDUCATION',
+      title: 'EDUCATION',
       desc: 'Education is at the heart of our mission. We believe that by educating communities about the importance of environmental protection and sustainability, we can empower individuals to take action and make a lasting difference. Our educational programs provide the knowledge and tools needed to understand the challenges of climate change, waste management, and biodiversity conservation. By working with schools, universities, and community groups, we aim to inspire the next generation of environmental leaders and advocates.',
       img: '/images/mey.png',
     },
     {
-      id: 'partner',
-      title: 'Partner',
+      id: 'ACTION',
+      title: 'ACTION',
       desc: 'We are proud to work with schools, NGOs, and other organizations that share our vision for a greener and more sustainable world. Through these partnerships, we are able to collaborate on various projects such as tree planting, waste cleanup, and environmental education. Together, we are building a global network of environmental advocates who are united in their efforts to protect and restore the Earth. These partnerships allow us to expand our reach, leverage resources, and create a greater impact.',
       img: '/images/trees.png',
     },
     {
-      id: 'friend',
-      title: 'Friend',
+      id: 'JOIN US',
+      title: 'JOIN US',
       desc: 'To us, everyone who joins or supports our cause is a friend. Whether it’s a community member participating in a cleanup, a volunteer helping us organize an event, or a donor contributing to our initiatives, we value each and every individual who believes in our mission. We consider our supporters an integral part of our journey, and together, we are making positive changes that will benefit both people and the planet. Our goal is to build a community where people from all walks of life can come together and work towards common goals.',
       img: '/images/trees.png',
     },
     {
-      id: 'why',
-      title: 'Why',
+      id: 'PARTNERSHIP',
+      title: 'PARTNERSHIP',
       desc: 'We do this because the Earth is our only home, and its future is at risk. With increasing pollution, deforestation, and climate change, we believe that urgent action is needed to protect the environment for future generations. Our mission is to raise awareness about these issues and inspire people to take action, whether through small changes in their daily lives or by supporting larger environmental initiatives. We want to create a world where sustainability is not just a buzzword, but a way of life for everyone.',
       img: '/images/trees.png',
     },
     {
-      id: 'what',
-      title: 'What',
+      id: 'EVENT',
+      title: 'EVENT',
       desc: 'We organize community cleanups, plant trees, and promote sustainable practices in everyday life. Our initiatives include reducing waste, increasing recycling efforts, and educating people about the benefits of renewable energy sources. We also host workshops and awareness campaigns to engage communities and encourage them to adopt greener practices. From organizing local cleanup drives to large-scale tree planting events, our work is focused on creating a tangible, positive impact on the environment and the communities we serve.',
       img: '/images/trees.png',
     },

@@ -1,136 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
 import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
 
-// Category Type
-interface Category {
-  title: string;
-  emoji: string;
-  description: string;
-  image: string;
-}
-
-// Data: Categories
-const categories: Category[] = [
-  {
-    title: "Trees",
-    emoji: "🌳",
-    description: "Strong, tall, and helpful",
-    image: "/images/trees.png",
-  },
-  {
-    title: "Flowers",
-    emoji: "🌸",
-    description: "Colorful and meaningful",
-    image: "/images/flowers.png",
-  },
-  {
-    title: "Vegetables",
-    emoji: "🥬",
-    description: "Good for healthy",
-    image: "/images/vegetables.png",
-  },
-  {
-    title: "Aloe Vera",
-    emoji: "🌿",
-    description: "Medicinal and soothing",
-    image: "/images/aloe-vera.png",
-  },
-  {
-    title: "Fruits",
-    emoji: "🍎",
-    description: "Tasty and nutritious",
-    image: "/images/fruits.png",
-  },
-  {
-    title: "Compost",
-    emoji: "♻️",
-    description: "Recycle to enrich the soil",
-    image: "/images/compost.png",
-  },
-  {
-    title: "Birds",
-    emoji: "🐦",
-    description: "Sing and keep balance in nature",
-    image: "/images/birds.png",
-  },
-  {
-    title: "Insects",
-    emoji: "🦋",
-    description: "Tiny helpers in ecosystems",
-    image: "/images/insects.png",
-  },
-  {
-    title: "Fruits",
-    emoji: "🍎",
-    description: "Tasty and nutritious",
-    image: "/images/fruits.png",
-  },
-  {
-    title: "Compost",
-    emoji: "♻️",
-    description: "Recycle to enrich the soil",
-    image: "/images/compost.png",
-  },
-  {
-    title: "Birds",
-    emoji: "🐦",
-    description: "Sing and keep balance in nature",
-    image: "/images/birds.png",
-  },
-  {
-    title: "Insects",
-    emoji: "🦋",
-    description: "Tiny helpers in ecosystems",
-    image: "/images/insects.png",
-  },
-];
-
-// Reusable Component: Category Card
-const CategoryCard: React.FC<{ item: Category }> = ({ item }) => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate("/category");
-    }, 700);
-  };
-
-  return (
-    <>
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-80 flex items-center justify-center z-50">
-          <div className="w-12 h-12 border-4 border-green-600 border-dashed rounded-full animate-spin"></div>
-        </div>
-      )}
-
-      <div
-        onClick={handleClick}
-        className="cursor-pointer bg-white rounded-xl shadow-md hover:shadow-lg transition p-4 max-w-xs"
-      >
-        <img
-          src={item.image}
-          alt={item.title}
-          className="rounded-md h-36 w-full object-cover"
-        />
-        <h3 className="text-lg font-bold mt-2">
-          {item.emoji} {item.title}
-        </h3>
-        <p className="text-sm text-gray-600">{item.description}</p>
-      </div>
-    </>
-  );
-};
-
-// Main Component: Category List
 const CategoryList: React.FC = () => {
-  const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const isAuthenticated = !!localStorage.getItem("jwt");
@@ -146,14 +20,6 @@ const CategoryList: React.FC = () => {
     }, 700);
   };
 
-  const filteredCategories = categories.filter((item) =>
-    item.title.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const visibleCategories = showAll
-    ? filteredCategories
-    : filteredCategories.slice(0, 8);
-
   return (
     <>
       <Header />
@@ -165,60 +31,48 @@ const CategoryList: React.FC = () => {
         </div>
       )}
 
-      <main className="px-6 md:px-24 py-8">
-        {/* Top bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-gray-100 p-4 rounded-xl shadow-md">
-          <button
-            onClick={handleCreateProject}
-            className={`${
-              isAuthenticated
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 hover:bg-gray-500"
-            } text-white font-semibold px-4 py-2 rounded-lg shadow-md mb-4 sm:mb-0`}
-          >
-            Create Project +
-          </button>
+      {/* Info + Video Section */}
+      <section className="bg-green-100 px-6 md:px-24 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-green-50 p-16 rounded-xl shadow-md">
+          {/* Text Content */}
+          <div className="  text-gray-800 text-64 leading-relaxed space-y-4 h-96">
+            <p>
+              Pour un Sourire d’Enfant – For a Child’s Smile (PSE) – is a non-profit
+              organization operating in Cambodia since 1995 to help children suffering
+              acute hardship by reintegrating them into society and by creating a safe
+              and appropriate environment for them to study and to learn a trade that is
+              as highly qualified as possible.
+            </p>
+            <p>
+              PSE is operating six main programs that meet children needs: nutrition,
+              healthcare, protection and accommodation, general education, vocational
+              training, and family support.
+            </p>
+            <p>
+              Currently, PSE is taking care of 6,500 children. 4,000 graduates from the
+              PSE Vocational Training program have successfully integrated into the job
+              market with real qualified positions.
+            </p>
+            <p>
+              PSE employs around 650 Cambodian people and 300 volunteers globally.
+              In 2000, PSE was awarded the French Human Rights Prize by the French Republic.
+            </p>
+          </div>
 
-          <div className="relative w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder="Search categories..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 w-full sm:w-72"
-            />
-            <Search className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />
+          {/* YouTube Video */}
+          <div className="w-full h-64 md:h-auto">
+          <iframe
+  className="w-full h-full rounded-xl min-h-[300px]"
+  src="https://www.youtube.com/embed/G9t__9Tmwv4"
+  title="PSE EcoShare Video"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
           </div>
         </div>
-
-        {/* Section Title */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Biodiversity</h2>
-          {filteredCategories.length > 0 && (
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="text-sm text-blue-500 hover:underline"
-            >
-              {showAll ? "Show Less" : "See All"}
-            </button>
-          )}
-        </div>
-
-        {/* Category Cards */}
-        <div className="mx-auto ml-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
-            {visibleCategories.length > 0 ? (
-              visibleCategories.map((item) => (
-                <CategoryCard key={item.title + item.image} item={item} />
-              ))
-            ) : (
-              <p className="text-gray-500 text-center col-span-full">
-                No categories found.
-              </p>
-            )}
-          </div>
-        </div>
-      </main>
+      </section>
     </>
   );
 };

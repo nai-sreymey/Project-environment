@@ -36,7 +36,7 @@ const PlantSection: React.FC = () => {
   }, [selectedCategory]);
 
   return (
-    <section className="p-8 bg-gradient-to-br from-green-50 to-green-100 min-h-screen">
+    <section className="p-8 bg-gradient-to-br from-green-100 to-green-100 min-h-screen">
       <div className="max-w-7xl mx-auto">
 
         {/* Category Selector */}

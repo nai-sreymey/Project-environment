@@ -193,8 +193,6 @@ const EventPage = () => {
                     <span className="inline-block mt-3 px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                       Environmental
                     </span>
-
-                   
                   </CardContent>
                 </Card>
               </motion.div>
