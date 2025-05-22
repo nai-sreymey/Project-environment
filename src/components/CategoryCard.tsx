@@ -40,3 +40,10 @@ const CategoryCard: React.FC<{ item: Category }> = ({ item }) => {
 };
 
 export default CategoryCard;
+
+
+
+
+
+
+

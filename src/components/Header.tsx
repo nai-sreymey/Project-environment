@@ -51,7 +51,7 @@ const Header = () => {
             {[
               { label: "Home", path: "/" },
               { label: "About", path: "/about" },
-              { label: "Category", path: "/category" },
+              { label: "Projects", path: "/projects" },
               { label: "Event", path: "/event" },
             ].map((item) => (
               <button

@@ -8,7 +8,6 @@ const CategoryList = () => {
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const visibleCategories = showAll ? categories : categories.slice(0, 8);
   const isAuthenticated = !!localStorage.getItem("jwt"); // Check JWT for login
 
@@ -63,7 +62,6 @@ const CategoryList = () => {
             {showAll ? "Show Less" : "See All"}
           </button>
         </div>
-
         {/* Category Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
           {visibleCategories.map((item) => (
