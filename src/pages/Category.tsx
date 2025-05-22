@@ -229,6 +229,39 @@
 // export default CategoryList;
 
 
+//                 </p>
+//                 <p className="text-xs text-gray-500 mt-1">
+//                   📅 <b>Published:</b> {formatDate(project.publish_date)}
+//                 </p>
+//                 <p className="text-xs text-gray-500">
+//                   🧑 <b>By:</b> {project.users_permissions_users?.[0]?.username  "Unknown"}
+//                 </p>
+//                 <p className="text-xs text-gray-500">
+//                   🏷 <b>Category:</b> {project.category?.category_name  "N/A"}
+//                 </p>
+//               </div>
+//              </Link>
+//             );
+//           })}
+//         </div>
+
+//         {visibleProjects.length < filteredProjects.length && (
+//           <div className="text-center mt-6">
+//             <button
+//               onClick={() => setVisibleCount((prev) => prev + 4)}
+//               className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-md"
+//             >
+//               Load More
+//             </button>
+//           </div>
+//         )}
+//       </main>
+//     </>
+//   );
+// }
+
+// export default CategoryList;
+
 
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -270,7 +303,6 @@ function CategoryList() {
     setError(null);
 
     let url = "http://localhost:1337/api/projects?populate=*";
-
     if (category && category !== "") {
       url += `&filters[category][category_name][$eq]=${category.toLowerCase()}`;
     }
@@ -281,7 +313,7 @@ function CategoryList() {
         return res.json();
       })
       .then((data) => {
-        setProjects((data.data || []).reverse());
+        setProjects((data.data as Project[]).reverse());
         setLoading(false);
       })
       .catch((err) => {
@@ -293,11 +325,7 @@ function CategoryList() {
   const handleCreateProject = () => {
     setNavigating(true);
     setTimeout(() => {
-      if (isAuthenticated) {
-        navigate("/post");
-      } else {
-        navigate("/login");
-      }
+      navigate(isAuthenticated ? "/post" : "/login");
     }, 700);
   };
 
@@ -451,4 +479,3 @@ function CategoryList() {
 }
 
 export default CategoryList;
-
