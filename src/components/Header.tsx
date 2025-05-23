@@ -88,7 +88,7 @@ const Header = () => {
             className="hidden md:flex items-center gap-x-4 px-4 py-2 rounded-full border border-gray-200 bg-white shadow-inner"
             aria-label="Primary Navigation"
           >
-            {["Home", "About", "Category", "Event"].map((label) => {
+            {["Home", "About", "Projects", "Event"].map((label) => {
               const path =
                 label.toLowerCase() === "home" ? "/" : `/${label.toLowerCase()}`;
               return (
@@ -195,7 +195,7 @@ const Header = () => {
             className="md:hidden bg-white shadow-xl border-t rounded-b-xl py-3"
             aria-label="Mobile Navigation"
           >
-            {["Home", "About", "Category", "Event"].map((label) => {
+            {["Home", "About", "Projects", "Event"].map((label) => {
               const path =
                 label.toLowerCase() === "home" ? "/" : `/${label.toLowerCase()}`;
               return (
