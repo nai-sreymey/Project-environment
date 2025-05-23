@@ -3,73 +3,94 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { motion } from "framer-motion";
 
-const categories = [
-  "Water", "Food", "Energy", "Biodiversity", "Club", "Waste", "Air Quality",
-] as const;
-
-type Category = typeof categories[number];
-
-const sampleTitles: Record<Category, string[]> = {
-  Water: ["Clean Water Drive", "River Cleanup", "Water Conservation Workshop"],
-  Food: ["Community Garden Project", "Sustainable Food Fair", "Organic Farming Seminar"],
-  Energy: ["Solar Power Installation", "Energy Saving Tips", "Green Energy Expo"],
-  Biodiversity: ["Wildlife Protection Campaign", "Tree Planting Day", "Bird Watching Event"],
-  Club: ["Eco Club Meetup", "Youth Green Club", "Volunteer Gathering"],
-  Waste: ["Plastic-Free Challenge", "Recycling Workshop", "Zero Waste Week"],
-  "Air Quality": ["Air Pollution Awareness", "Bike to Work Day", "Tree Shade Campaign"],
-};
-
 interface Event {
+  id: number;
   title: string;
-  content: string;
-  date: string;
-  time: string;
+  description: string;
   location: string;
-  createdBy: string;
-  publishedOn: string;
-  image: string;
-  category: Category;
+  start_time: string;
+  end_time: string;
+  createdAt: string;
+  publishedAt: string;
+  publish_date: string | null;
+  publish_by: string | null;
+  participants: string | null;
+  purpose: string | null;
+  member_participants: string | null;
+  manager: string | null;
+  attachments?: { url?: string }[];
+  category?: string;
 }
 
-const allEvents: Event[] = Array.from({ length: 50 }).map((_, i) => {
-  const category = categories[i % categories.length];
-  const titlesForCat = sampleTitles[category];
-  const title = titlesForCat[i % titlesForCat.length];
-  const content = `This event aims to raise awareness and encourage action in the ${category.toLowerCase()} sector. Everyone is welcome to join and contribute to a greener future. Together, we can make a difference by engaging with our community and supporting environmental goals.`;
-  const dateNum = 20 + (i % 10);
-  const publishedNum = 15 + (i % 10);
-
-  return {
-    title,
-    content,
-    date: `May ${dateNum}, 2025`,
-    time: "9:00 AM - 12:00 PM",
-    location: "Phnom Penh Center",
-    createdBy: "Nai Sreymey",
-    publishedOn: `May ${publishedNum}, 2025`,
-    image: "/images/trees.png",
-    category,
-  };
-});
 
 const EventPage: React.FC = () => {
   const navigate = useNavigate();
+  const [events, setEvents] = useState<Event[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredEvents = allEvents.filter((event) =>
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("http://localhost:1337/api/events");
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+
+        const mappedEvents: Event[] = data.data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          location: item.location,
+          start_time: item.start_time,
+          end_time: item.end_time,
+          createdAt: item.createdAt,
+          publishedAt: item.publishedAt,
+          publish_date: item.publish_date,
+          publish_by: item.publish_by,
+          participants: item.participants,
+          purpose: item.purpose,
+          member_participants: item.member_participants,
+          manager: item.manager,
+          attachments: item.attachments,
+          category: item.category,
+        }));
+
+        setEvents(mappedEvents);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   const visibleEvents = filteredEvents.slice(0, visibleCount);
+  
+  // ✅ Fixed fallback image function
+const getFallbackImage = (category?: string) => {
+  const catName = category?.toLowerCase() || "";
+  if (catName.includes("tree")) return "/images/trees.png";
+  if (catName.includes("flower")) return "/images/flower.jpg";
+  return "/images/flowers.png";
+};
 
-  const handleShowMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
-  };
 
   useEffect(() => {
     setVisibleCount(6);
   }, [searchTerm]);
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-300 font-sans text-green-900">
@@ -90,54 +111,71 @@ const EventPage: React.FC = () => {
           className="w-full max-w-xl mx-auto block mb-12 px-5 py-3 text-green-900 placeholder-green-600 rounded-xl border-2 border-green-500 shadow-md focus:outline-none focus:ring-4 focus:ring-green-600 transition"
         />
 
-        {visibleEvents.length === 0 && (
+        {loading && <p className="text-center text-xl font-semibold mt-10">Loading events...</p>}
+        {error && <p className="text-center text-xl font-semibold mt-10 text-red-600">{error}</p>}
+
+        {!loading && !error && visibleEvents.length === 0 && (
           <p className="text-center text-xl font-semibold mt-10">No events found.</p>
         )}
 
         <div className="grid grid-cols-1 gap-16">
-          {visibleEvents.map((event, i) => (
-            <div
-              key={i}
-              className="flex flex-col md:flex-row items-center md:items-stretch gap-10 bg-white bg-opacity-80 border border-green-400 rounded-3xl shadow-xl overflow-hidden transition hover:shadow-2xl"
-            >
-              <div className="w-full md:w-2/3 h-80 md:h-auto relative">
-                <motion.img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3 text-green-100 font-medium">
-                  {event.date} | {event.time}
-                </div>
-              </div>
+          {!loading &&
+            !error &&
+            visibleEvents.map((event) => {
+              const imageUrl =
+                event.attachments?.[0]?.url || getFallbackImage(event.category);
 
-              <div className="p-6 md:w-1/2 space-y-4">
-                <h2 className="text-2xl font-bold text-green-800">{event.title}</h2>
-                <p className="text-gray-800 text-sm leading-relaxed">
-                  {event.content.length > 200
-                    ? event.content.slice(0, 200) + "..."
-                    : event.content}
-                </p>
-
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>📍 Location: {event.location}</p>
-                  <p>✍️ By: {event.createdBy}</p>
-                  <p>📢 Published: {event.publishedOn}</p>
-                </div>
-
-                <button
-                  onClick={() => navigate(`/events/${i}`)}
-                  className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow transition duration-300"
+              return (
+                <div
+                  key={event.id}
+                  className="flex flex-col md:flex-row items-center md:items-stretch gap-10 bg-white bg-opacity-80 border border-green-400 rounded-3xl shadow-xl overflow-hidden transition hover:shadow-2xl"
                 >
-                  View Details
-                </button>
-              </div>
-            </div>
-          ))}
+                  <div className="w-full md:w-2/3 h-80 md:h-auto relative">
+                    <motion.img
+                      src={imageUrl}
+                      alt={event.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3 text-green-100 font-medium">
+                      {new Date(event.start_time).toLocaleDateString()} |{" "}
+                      {new Date(event.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
+                      {new Date(event.end_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  </div>
+
+                  <div className="p-6 md:w-1/2 space-y-4">
+                    <h2 className="text-2xl font-bold text-green-800">{event.title}</h2>
+                    <p className="text-gray-800 text-sm leading-relaxed">
+                      {event.description.length > 200
+                        ? event.description.slice(0, 200) + "..."
+                        : event.description}
+                    </p>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>🎯 <strong>Purpose:</strong> {event.purpose || "N/A"}</p>
+                      <p>📍 Location: {event.location}</p>
+                      <p>👤 <strong>Manager:</strong> {event.manager || "N/A"}</p>
+                      <p>👥 <strong>Participants:</strong> {event.participants || "N/A"}</p>
+                      <p>🧑‍🤝‍🧑 <strong>Member Participants:</strong> {event.member_participants || "N/A"}</p>
+                      <p>🗓️ <strong>Publish Date:</strong> {event.publish_date ? new Date(event.publish_date).toLocaleDateString() : "N/A"}</p>
+                      <p>📝 <strong>Published By:</strong> {event.publish_by || "N/A"}</p>
+                      <p>📢 <strong>Published At:</strong> {event.publishedAt ? new Date(event.publishedAt).toLocaleString() : "Not published"}</p>
+                    </div>
+
+                    <button
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow transition duration-300"
+                      aria-label={`View details for event ${event.title}`}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
         </div>
 
-        {visibleCount < filteredEvents.length && (
+        {!loading && visibleCount < filteredEvents.length && (
           <button
             onClick={handleShowMore}
             className="mt-16 block mx-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition"
