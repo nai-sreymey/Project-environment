@@ -1,49 +1,136 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 
 const sections = [
   {
     id: 'glance',
     title: 'PSE At A Glance',
-    desc: `We started our journey in 2022 with a simple but powerful dream. Our vision was to create a world where environmental sustainability and social impact are at the heart of every community. With a small team and a big idea, we took the first step towards building a better future for our planet. Over time, our passion for preserving nature grew stronger, and we started to partner with like-minded organizations to amplify our impact and reach more people in need of support.`,
+    desc: `
+PSE operates six main programs that meet children's needs, allowing a key-integrated approach for its success: nutrition, healthcare, protection and accommodation, general education, vocational training, and family support. Currently, PSE cares for 6,500 children in its various programs. 4,000 graduates from PSE's Vocational Training program have successfully integrated into the job market with real qualified positions. They live with dignity and support their families.
+
+PSE employs around 650 Cambodian people (teachers, trainers, doctors, social assistants…) and 4 staff in France. Additionally, 300 volunteers from different countries actively work to promote the organization and support fundraising, donations, and sponsorships.
+
+In 2000, PSE was awarded the French Human Rights Prize by the French Republic.
+
+About the PSE Environment Project
+
+This project fully engages PSE in environmental protection by developing environmental education in Cambodia. The project aims to make PSE an "eco-school" with four main objectives:
+1. Provide environmental awareness to all students and staff
+2. Implement eco-facilities and conduct environmental activities
+3. Develop partnerships and community outreach
+4. Integrate environmental rules into PSE policy
+`,
     img: '/images/trees.png',
   },
   {
     id: 'education',
     title: 'Education',
-    desc: `Education is at the heart of our mission. We believe that by educating communities about the importance of environmental protection and sustainability, we can empower individuals to take action and make a lasting difference. Our educational programs provide the knowledge and tools needed to understand the challenges of climate change, waste management, and biodiversity conservation.`,
+    desc: `
+Students are the core of the environment project. They receive environmental education through weekly classes on various topics such as climate change, biodiversity, air and water pollution, waste management, energy saving, vegetarian meals, compost production, gardening, and recycling.
+
+We aim to facilitate students to become active environmentalists and responsible citizens who lead positive impacts on society, respect nature, and promote sustainable development. Theory-based lessons provide opportunities to discuss scientific information and understand environmental concepts. Students develop projects and engage in practical sessions to experiment, explore, and learn through their five senses.
+
+The objectives of environmental education are:
+- Raise environmental awareness among students and staff with scientific information and discussions about causes, consequences, impacts, effects, and solutions.
+- Facilitate student participation in activities that align with the curriculum and PSE's needs.
+- Encourage and motivate students to respect the environment and contribute to sustainable development.
+`,
     img: '/images/mey.png',
   },
   {
     id: 'action',
     title: 'Action',
-    desc: `We work with schools, NGOs, and other organizations to collaborate on projects like tree planting, waste cleanup, and environmental education. Together, we build a global network united to protect and restore the Earth.`,
+    desc: `
+Based on the needs of staff and students, PSE has defined four main themes for the project: waste management, energy saving, green spaces, and food quality.
+
+In 2022 and 2023, waste management initiatives included: a new bins system and sorting, a zero-plastic policy, banning single-use plastic items in purchasing, implementing compost production, recycling waste, and battery waste management. Training on proper bin usage was provided to all PSE students and staff. Additionally, waste management policy has been established and is being implemented.
+
+A vegetarian meal is introduced monthly to raise awareness about food and the environment.
+
+In 2024, energy saving efforts included installing 100% LED lighting at PSE and establishing an Energy Saving Competition.
+
+In 2025, work is ongoing to renovate green spaces at PSE, including improving landscapes, gardens (plant reproduction, tree planting, and vegetable production).
+`,
     img: '/images/trees.png',
   },
   {
     id: 'join',
     title: 'Join Us',
-    desc: `Everyone who supports our cause is a friend. Volunteers, donors, community members — together, we make positive change benefiting people and the planet.`,
+    desc: `
+The Eco-Club is an active youth group passionate about making a positive impact on the school and community. Members develop and lead weekend projects such as tree planting, gardening, waste management, food, and energy conservation. Eco-Club members are trained as leaders to run projects.
+
+Supportive members: Every student can join as a supportive member, participating in weekend activities to learn and help implement projects.
+
+Join us if you want to deepen your environmental knowledge, become an Eco-Club member, or support occasionally. You are always welcome!
+`,
     img: '/images/trees.png',
   },
   {
     id: 'partnership',
     title: 'Partnership',
-    desc: `The Earth is our only home. Facing pollution, deforestation, and climate change, we raise awareness and inspire action for a sustainable future.`,
+    desc: `
+PSE cannot protect the environment alone. We actively seek partnerships with government bodies (including the Ministry of Environment, Cambodia Agriculture Research and Development Institute - CARDI, Ministry of Agriculture, Forestry and Fisheries), NGOs, public schools, private companies, and especially PSE family committees.
+
+Partnerships allow beneficiaries to learn and explore different sectors. They gain broader perspectives and understand the various roles and missions of institutions working towards the shared goal of a sustainable future.
+`,
     img: '/images/trees.png',
   },
   {
     id: 'event',
     title: 'Event',
-    desc: `We organize cleanups, plant trees, promote sustainable practices, and host workshops to engage communities in green living.`,
+    desc: `
+1. PSE Environment Day  
+2. Student Study Trip  
+3. Annual Eco-Club Study Trip
+    `,
     img: '/images/trees.png',
   },
 ];
 
+const style = `
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+`;
+
+const LeftArrowIcon = () => (
+  <svg
+    className="w-6 h-6 text-green-800"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+  </svg>
+);
+
+const RightArrowIcon = () => (
+  <svg
+    className="w-6 h-6 text-green-800"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+  </svg>
+);
+
+const Style = () => <style>{style}</style>;
+
 const AboutUs = () => {
   const [activeId, setActiveId] = useState(sections[0].id);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Highlight active section on scroll
   useEffect(() => {
     const handleScroll = () => {
       let current = sections[0].id;
@@ -64,14 +151,22 @@ const AboutUs = () => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const scrollLeft = () => {
+    scrollContainerRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
+  };
+  const scrollRight = () => {
+    scrollContainerRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen bg-green-100 text-gray-900 font-sans">
-      {/* Header */}
+    <div className="min-h-screen bg-green-50 text-gray-900 font-sans">
+      <Style />
+
       <Header />
 
-      <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-12">
-        {/* Sidebar navigation */}
-        <nav className="md:w-1/4 sticky top-24 self-start">
+      <div className="max-w-7xl mx-auto px-12 py-10 flex flex-col md:flex-row gap-12">
+        {/* Sidebar nav for md+ (sticky/fixed and scrollable) */}
+        <nav className="hidden md:block md:w-64 md:fixed md:top-24 md:left-0 md:h-[calc(100vh-6rem)] md:overflow-auto md:px-4">
           <ul className="space-y-4">
             {sections.map(({ id, title }) => (
               <li key={id}>
@@ -95,32 +190,63 @@ const AboutUs = () => {
           </ul>
         </nav>
 
-        {/* Content sections */}
-        <main className="md:w-3/4 space-y-20">
+        {/* Horizontal scroll nav with arrows on small screens */}
+        <div className="md:hidden flex items-center gap-2 px-2">
+          {/* Left arrow */}
+          <button
+            onClick={scrollLeft}
+            aria-label="Scroll left"
+            className="bg-green-200 hover:bg-green-300 rounded-full p-2 shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-110"
+          >
+            <LeftArrowIcon />
+          </button>
+
+          {/* Scroll container */}
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-3 overflow-x-auto scroll-smooth hide-scrollbar flex-1"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {sections.map(({ id, title }) => (
+              <button
+                key={id}
+                onClick={() => scrollTo(id)}
+                className={`
+                  whitespace-nowrap px-6 py-2 rounded-lg font-semibold
+                  ${
+                    activeId === id
+                      ? 'bg-green-700 text-white shadow-lg scale-105'
+                      : 'bg-green-200 text-green-900 hover:bg-green-300 hover:shadow-md hover:scale-105'
+                  }
+                  transition transform duration-300 ease-in-out
+                `}
+              >
+                {title}
+              </button>
+            ))}
+          </div>
+
+          {/* Right arrow */}
+          <button
+            onClick={scrollRight}
+            aria-label="Scroll right"
+            className="bg-green-200 hover:bg-green-300 rounded-full p-2 shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-110"
+          >
+            <RightArrowIcon />
+          </button>
+        </div>
+
+        {/* Main content area */}
+        <main className="flex-1 md:ml-[16rem] space-y-24">
           {sections.map(({ id, title, desc, img }) => (
-            <section id={id} key={id} className="flex flex-col md:flex-row items-center gap-8">
-              <img
-                src={img}
-                alt={title}
-                className="rounded-xl shadow-md w-full md:w-1/2 h-64 object-cover"
-                loading="lazy"
-                draggable={false}
-              />
-              <div className="w-full md:w-1/2 bg-white p-8 rounded-xl shadow-md">
-                <h2 className="text-3xl font-semibold text-green-800 mb-4">{title}</h2>
-                <p className="text-gray-700 leading-relaxed">{desc}</p>
-              </div>
+            <section key={id} id={id} className="scroll-mt-24">
+              <h2 className="text-3xl font-bold mb-5 text-green-900">{title}</h2>
+              <p className="whitespace-pre-line mb-6 text-gray-800">{desc}</p>
+              <img src={img} alt={title} className="w-full rounded-lg shadow-md max-h-96 object-cover" />
             </section>
           ))}
         </main>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-green-700 text-white text-center py-6 mt-20">
-        <p className="text-sm sm:text-base">
-          © 2025 EcoShare. Created by <strong>Nai Sreymey & Phorn Sreyphea</strong>
-        </p>
-      </footer>
     </div>
   );
 };

@@ -188,9 +188,7 @@ const CategoryList: React.FC = () => {
               About PSE Cambodia
             </h2>
             <p className="text-gray-800 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-              Pour un Sourire d’Enfant (PSE) is a non-profit in Cambodia since 1995.
-              It helps children escape extreme hardship and build a brighter future
-              through education, healthcare, protection, and job training.
+            Pour un Sourire d’Enfant – For a Child’s Smile(PSE) - is a non-profit organization operating in Cambodia since 1995 to help children suffering acute hardship by reintegrating them into society and by creating a safe and appropriate environment for them to study and to learn a trade that is as highly qualified as possible. Recognized by the local authorities, PSE is working with full respect of the country, with the Cambodians, and thus supports sustainable development.
             </p>
             <button
               onClick={handleShowMoreAbout}
