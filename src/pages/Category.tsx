@@ -218,6 +218,7 @@
 // export default CategoryList;
 
 
+
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -260,6 +261,7 @@ function CategoryList() {
 
     let url = "http://localhost:1337/api/projects?populate=*&filters[project_status][$eq]=approved";
 
+
     if (category && category !== "") {
       url += `&filters[category][category_name][$eq]=${category.toLowerCase()}`;
     }
@@ -275,6 +277,7 @@ function CategoryList() {
           ...item.attributes,
         }));
         setProjects(projectsData.reverse());
+        // setProjects((data.data as Project[]).reverse());
         setLoading(false);
       })
       .catch((err) => {
