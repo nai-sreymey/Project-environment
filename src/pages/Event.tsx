@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
@@ -269,4 +270,4 @@ const EventPage: React.FC = () => {
   );
 };
 
-export default EventPage;
+export default Header;

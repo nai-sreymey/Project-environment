@@ -180,15 +180,17 @@ const CategoryList: React.FC = () => {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="bg-green-50 px-6 md:px-20 py-12 lg:border-b lg:border-green-800">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-green-900 mb-4">
-              About PSE Cambodia
-            </h2>
-            <p className="text-gray-800 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-            Pour un Sourire d’Enfant – For a Child’s Smile(PSE) - is a non-profit organization operating in Cambodia since 1995 to help children suffering acute hardship by reintegrating them into society and by creating a safe and appropriate environment for them to study and to learn a trade that is as highly qualified as possible. Recognized by the local authorities, PSE is working with full respect of the country, with the Cambodians, and thus supports sustainable development.
+      {/* Info + Video Section */}
+      <section className="bg-green-100 px-6 md:px-24 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-green-50 p-16 rounded-xl shadow-md">
+          {/* Text Content */}
+          <div className="  text-gray-800 text-64 leading-relaxed space-y-4 h-96">
+            <p>
+              Pour un Sourire d’Enfant – For a Child’s Smile (PSE) – is a non-profit
+              organization operating in Cambodia since 1995 to help children suffering
+              acute hardship by reintegrating them into society and by creating a safe
+              and appropriate environment for them to study and to learn a trade that is
+              as highly qualified as possible.
             </p>
             <button
               onClick={handleShowMoreAbout}
