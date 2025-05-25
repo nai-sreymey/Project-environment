@@ -15,10 +15,10 @@ In 2000, PSE was awarded the French Human Rights Prize by the French Republic.
 About the PSE Environment Project
 
 This project fully engages PSE in environmental protection by developing environmental education in Cambodia. The project aims to make PSE an "eco-school" with four main objectives:
-1. Provide environmental awareness to all students and staff
-2. Implement eco-facilities and conduct environmental activities
-3. Develop partnerships and community outreach
-4. Integrate environmental rules into PSE policy
+<strong>1.</strong> Provide environmental awareness to all students and staff
+<strong>2.</strong> Implement eco-facilities and conduct environmental activities
+<strong>3.</strong> Develop partnerships and community outreach
+<strong>4.</strong> Integrate environmental rules into PSE policy
 `,
     img: '/images/trees.png',
   },
@@ -79,9 +79,9 @@ Partnerships allow beneficiaries to learn and explore different sectors. They ga
     id: 'event',
     title: 'Event',
     desc: `
-1. PSE Environment Day  
-2. Student Study Trip  
-3. Annual Eco-Club Study Trip
+<strong>1.</strong> PSE Environment Day  
+<strong>2.</strong> Student Study Trip  
+<strong>3.</strong> Annual Eco-Club Study Trip
     `,
     img: '/images/trees.png',
   },
@@ -241,8 +241,17 @@ const AboutUs = () => {
           {sections.map(({ id, title, desc, img }) => (
             <section key={id} id={id} className="scroll-mt-24">
               <h2 className="text-3xl font-bold mb-5 text-green-900">{title}</h2>
-              <p className="whitespace-pre-line mb-6 text-gray-800">{desc}</p>
-              <img src={img} alt={title} className="w-full rounded-lg shadow-md max-h-96 object-cover" />
+              {/* Use dangerouslySetInnerHTML to render desc with HTML tags (for bold numbers) */}
+              <p
+                className="whitespace-pre-line mb-6 text-gray-800"
+                dangerouslySetInnerHTML={{ __html: desc }}
+              />
+              <img
+                src={img}
+                alt={title}
+                className="w-full rounded-lg shadow-md object-cover"
+                style={{ maxHeight: '500px', height: 'auto' }}
+              />
             </section>
           ))}
         </main>
