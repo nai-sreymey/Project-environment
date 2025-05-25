@@ -25,7 +25,7 @@ interface Event {
 const EventPage: React.FC = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(3); // Start with 3 events visible
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const EventPage: React.FC = () => {
     fetchEvents();
   }, []);
 
-  // Memoize filtered events to avoid unnecessary filtering on every render
+  // Filter events by search term
   const filteredEvents = useMemo(
     () =>
       events.filter((event) =>
@@ -78,17 +78,18 @@ const EventPage: React.FC = () => {
     [events, searchTerm]
   );
 
-  // Memoize visible events
+  // Show only visibleCount number of events
   const visibleEvents = useMemo(
     () => filteredEvents.slice(0, visibleCount),
     [filteredEvents, visibleCount]
   );
 
-  // Reset visible count when search term changes
+  // Reset visibleCount to 3 when search term changes
   useEffect(() => {
-    setVisibleCount(6);
+    setVisibleCount(3);
   }, [searchTerm]);
 
+  // Load 6 more events on "Show More"
   const handleShowMore = () => {
     setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
   };

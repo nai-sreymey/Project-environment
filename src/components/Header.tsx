@@ -1,291 +1,252 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Header from '../components/Header';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
-const sections = [
-  {
-    id: 'glance',
-    title: 'PSE At A Glance',
-    desc: `
-PSE operates six main programs that meet children's needs, allowing a key-integrated approach for its success: nutrition, healthcare, protection and accommodation, general education, vocational training, and family support. Currently, PSE cares for 6,500 children in its various programs. 4,000 graduates from PSE's Vocational Training program have successfully integrated into the job market with real qualified positions. They live with dignity and support their families.
+const Header = () => {
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-PSE employs around 650 Cambodian people (teachers, trainers, doctors, social assistants…) and 4 staff in France. Additionally, 300 volunteers from different countries actively work to promote the organization and support fundraising, donations, and sponsorships.
+  const isLoggedIn = !!localStorage.getItem("jwt");
+  const user = {
+    name: localStorage.getItem("username") || "Guest",
+    email: localStorage.getItem("userEmail") || "guest@example.com",
+    image: "/images/profile.png",
+  };
 
-In 2000, PSE was awarded the French Human Rights Prize by the French Republic.
+  const navigateTo = (path: string) => {
+    setLoading(true);
+    setTimeout(() => {
+      navigate(path);
+      setLoading(false);
+      setIsMobileMenuOpen(false);
+      setIsUserDropdownOpen(false);
+    }, 600);
+  };
 
-About the PSE Environment Project
+  const isActive = (path: string) => location.pathname === path;
 
-This project fully engages PSE in environmental protection by developing environmental education in Cambodia. The project aims to make PSE an "eco-school" with four main objectives:
-1. Provide environmental awareness to all students and staff
-2. Implement eco-facilities and conduct environmental activities
-3. Develop partnerships and community outreach
-4. Integrate environmental rules into PSE policy
-`,
-    img: '/images/trees.png',
-  },
-  {
-    id: 'education',
-    title: 'Education',
-    desc: `
-Students are the core of the environment project. They receive environmental education through weekly classes on various topics such as climate change, biodiversity, air and water pollution, waste management, energy saving, vegetarian meals, compost production, gardening, and recycling.
-
-We aim to facilitate students to become active environmentalists and responsible citizens who lead positive impacts on society, respect nature, and promote sustainable development. Theory-based lessons provide opportunities to discuss scientific information and understand environmental concepts. Students develop projects and engage in practical sessions to experiment, explore, and learn through their five senses.
-
-The objectives of environmental education are:
-- Raise environmental awareness among students and staff with scientific information and discussions about causes, consequences, impacts, effects, and solutions.
-- Facilitate student participation in activities that align with the curriculum and PSE's needs.
-- Encourage and motivate students to respect the environment and contribute to sustainable development.
-`,
-    img: '/images/mey.png',
-  },
-  {
-    id: 'action',
-    title: 'Action',
-    desc: `
-Based on the needs of staff and students, PSE has defined four main themes for the project: waste management, energy saving, green spaces, and food quality.
-
-In 2022 and 2023, waste management initiatives included: a new bins system and sorting, a zero-plastic policy, banning single-use plastic items in purchasing, implementing compost production, recycling waste, and battery waste management. Training on proper bin usage was provided to all PSE students and staff. Additionally, waste management policy has been established and is being implemented.
-
-A vegetarian meal is introduced monthly to raise awareness about food and the environment.
-
-In 2024, energy saving efforts included installing 100% LED lighting at PSE and establishing an Energy Saving Competition.
-
-In 2025, work is ongoing to renovate green spaces at PSE, including improving landscapes, gardens (plant reproduction, tree planting, and vegetable production).
-`,
-    img: '/images/trees.png',
-  },
-  {
-    id: 'join',
-    title: 'Join Us',
-    desc: `
-The Eco-Club is an active youth group passionate about making a positive impact on the school and community. Members develop and lead weekend projects such as tree planting, gardening, waste management, food, and energy conservation. Eco-Club members are trained as leaders to run projects.
-
-Supportive members: Every student can join as a supportive member, participating in weekend activities to learn and help implement projects.
-
-Join us if you want to deepen your environmental knowledge, become an Eco-Club member, or support occasionally. You are always welcome!
-`,
-    img: '/images/trees.png',
-  },
-  {
-    id: 'partnership',
-    title: 'Partnership',
-    desc: `
-PSE cannot protect the environment alone. We actively seek partnerships with government bodies (including the Ministry of Environment, Cambodia Agriculture Research and Development Institute - CARDI, Ministry of Agriculture, Forestry and Fisheries), NGOs, public schools, private companies, and especially PSE family committees.
-
-Partnerships allow beneficiaries to learn and explore different sectors. They gain broader perspectives and understand the various roles and missions of institutions working towards the shared goal of a sustainable future.
-`,
-    img: '/images/trees.png',
-  },
-  {
-    id: 'event',
-    title: 'Event',
-    desc: `
-1. PSE Environment Day  
-2. Student Study Trip  
-3. Annual Eco-Club Study Trip
-    `,
-    img: '/images/trees.png',
-  },
-];
-
-const style = `
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-`;
-
-const LeftArrowIcon = () => (
-  <svg
-    className="w-6 h-6 text-green-800"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-  </svg>
-);
-
-const RightArrowIcon = () => (
-  <svg
-    className="w-6 h-6 text-green-800"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-  </svg>
-);
-
-const Style = () => <style>{style}</style>;
-
-// Utility function to bold numbers in description text
-const boldNumbers = (text: string) => {
-  return text.split('\n').map((line, idx) => {
-    const parts = line.split(/(\d+(\.\d+)?)/g); // split by numbers (including decimals)
-    return (
-      <p key={idx} className="whitespace-pre-line mb-6 text-gray-800">
-        {parts.map((part, i) =>
-          /^\d+(\.\d+)?$/.test(part) ? (
-            <strong key={i} className="font-bold">
-              {part}
-            </strong>
-          ) : (
-            part
-          )
-        )}
-      </p>
-    );
-  });
-};
-
-const AboutUs = () => {
-  const [activeId, setActiveId] = useState(sections[0].id);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleScroll = () => {
-      let current = sections[0].id;
-      for (const section of sections) {
-        const el = document.getElementById(section.id);
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          if (top <= 150) current = section.id;
-        }
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
       }
-      setActiveId(current);
+    }
+    if (isUserDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const scrollLeft = () => {
-    scrollContainerRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
-  };
-  const scrollRight = () => {
-    scrollContainerRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
-  };
+  }, [isUserDropdownOpen]);
 
   return (
-    <div className="min-h-screen bg-green-50 text-gray-900 font-sans">
-      <Style />
+    <>
+      {loading && (
+        <div
+          className="fixed inset-0 bg-white/50 flex items-center justify-center z-[999]"
+          role="alert"
+          aria-live="assertive"
+        >
+          <div className="w-10 h-10 border-4 border-green-600 border-dashed rounded-full animate-spin" />
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
 
-      <Header />
-
-      <div className="max-w-7xl mx-auto px-12 py-10 flex flex-col md:flex-row gap-12">
-        {/* Sidebar nav for md+ (sticky/fixed and scrollable) */}
-        <nav className="hidden md:block md:w-64 md:fixed md:top-24 md:left-0 md:h-[calc(100vh-6rem)] md:overflow-auto md:px-4">
-          <ul className="space-y-4">
-            {sections.map(({ id, title }) => (
-              <li key={id}>
-                <button
-                  onClick={() => scrollTo(id)}
-                  className={`
-                    w-full text-left px-5 py-3 rounded-lg font-semibold transition
-                    duration-300 ease-in-out transform
-                    focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                    ${
-                      activeId === id
-                        ? 'bg-green-700 text-white shadow-xl scale-105'
-                        : 'text-green-800 hover:bg-green-200 hover:text-green-900 hover:shadow-lg hover:scale-105'
-                    }
-                  `}
-                >
-                  {title}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Horizontal scroll nav with arrows on small screens */}
-        <div className="md:hidden flex items-center gap-2 px-2">
-          {/* Left arrow */}
-          <button
-            onClick={scrollLeft}
-            aria-label="Scroll left"
-            className="bg-green-200 hover:bg-green-300 rounded-full p-2 shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-110"
-          >
-            <LeftArrowIcon />
-          </button>
-
-          {/* Scroll container */}
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-32 py-4 flex items-center justify-between">
+          {/* Logo */}
           <div
-            ref={scrollContainerRef}
-            className="flex gap-3 overflow-x-auto scroll-smooth hide-scrollbar flex-1"
-            style={{ WebkitOverflowScrolling: 'touch' }}
+            className="flex-shrink-0 cursor-pointer"
+            onClick={() => navigateTo("/")}
+            aria-label="Go to Home"
+            role="link"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigateTo("/");
+              }
+            }}
           >
-            {sections.map(({ id, title }) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                className={`
-                  whitespace-nowrap px-6 py-2 rounded-lg font-semibold
-                  ${
-                    activeId === id
-                      ? 'bg-green-700 text-white shadow-lg scale-105'
-                      : 'bg-green-200 text-green-900 hover:bg-green-300 hover:shadow-md hover:scale-105'
-                  }
-                  transition transform duration-300 ease-in-out
-                `}
-              >
-                {title}
-              </button>
-            ))}
+            <img
+              src="/images/pselogo.png"
+              alt="Logo"
+              className="h-12 w-auto"
+              draggable={false}
+            />
           </div>
 
-          {/* Right arrow */}
-          <button
-            onClick={scrollRight}
-            aria-label="Scroll right"
-            className="bg-green-200 hover:bg-green-300 rounded-full p-2 shadow-md flex items-center justify-center transition-transform duration-200 hover:scale-110"
+          {/* Navigation */}
+          <nav
+            className="hidden md:flex items-center gap-x-4 px-4 py-2 rounded-full border border-gray-200 bg-white shadow-inner"
+            aria-label="Primary Navigation"
           >
-            <RightArrowIcon />
-          </button>
+            {["Home", "About", "Projects", "Event"].map((label) => {
+              const path =
+                label.toLowerCase() === "home" ? "/" : `/${label.toLowerCase()}`;
+              return (
+                <button
+                  key={path}
+                  onClick={() => navigateTo(path)}
+                  className={`text-sm font-semibold px-4 py-2 rounded-full transition
+                    duration-300 ease-in-out transform
+                    ${
+                      isActive(path)
+                        ? "bg-green-600 text-white shadow-lg"
+                        : "text-gray-700 hover:bg-green-100 hover:text-green-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    }`}
+                  aria-current={isActive(path) ? "page" : undefined}
+                  aria-label={`Go to ${label}`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Right side: User and Mobile Menu */}
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Desktop User Dropdown */}
+            {isLoggedIn ? (
+              <div className="relative hidden md:block" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="flex items-center gap-3 text-sm font-medium text-gray-800 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
+                  aria-haspopup="true"
+                  aria-expanded={isUserDropdownOpen}
+                  aria-label="User menu"
+                >
+                  <img
+                    src={user.image}
+                    alt={`${user.name}'s profile`}
+                    className="w-10 h-10 rounded-full border-2 border-green-600 shadow-sm object-cover"
+                    draggable={false}
+                  />
+                  <span className="uppercase tracking-wide select-none hidden sm:inline">
+                    {user.name}
+                  </span>
+                </button>
+                <div
+                  className={`absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-xl overflow-hidden z-40 transition-opacity duration-300 ease-in-out ${
+                    isUserDropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
+                  }`}
+                  role="menu"
+                  aria-label="User dropdown menu"
+                >
+                  <div className="px-5 py-4 border-b">
+                    <p className="font-semibold text-gray-900 truncate">{user.name}</p>
+                    <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                  </div>
+                  <button
+                    onClick={() => navigateTo("/profile")}
+                    className="w-full text-left px-6 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 transition"
+                    role="menuitem"
+                    tabIndex={isUserDropdownOpen ? 0 : -1}
+                  >
+                    👤 View Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      navigateTo("/");
+                    }}
+                    className="w-full text-left px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition"
+                    role="menuitem"
+                    tabIndex={isUserDropdownOpen ? 0 : -1}
+                  >
+                    🔓 Logout
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => navigateTo("/login")}
+                className="hidden md:block text-sm font-semibold px-6 py-2 rounded-full border border-gray-300 hover:border-green-600 hover:bg-green-100 text-gray-800 hover:text-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label="Login"
+              >
+                LOGIN
+              </button>
+            )}
+
+            {/* Mobile Menu Toggle */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-700 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+              >
+                {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Main content area */}
-        <main className="flex-1 md:ml-[18rem] space-y-20">
-          {sections.map(({ id, title, desc, img }) => (
-            <section
-              id={id}
-              key={id}
-              className="scroll-mt-20 md:scroll-mt-24"
-              tabIndex={-1}
-              aria-label={title}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-green-900">{title}</h2>
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <nav
+            className="md:hidden bg-white shadow-xl border-t rounded-b-xl py-3"
+            aria-label="Mobile Navigation"
+          >
+            {["Home", "About", "Projects", "Event"].map((label) => {
+              const path =
+                label.toLowerCase() === "home" ? "/" : `/${label.toLowerCase()}`;
+              return (
+                <button
+                  key={path}
+                  onClick={() => navigateTo(path)}
+                  className={`block w-full text-left px-6 py-3 text-sm font-semibold uppercase transition
+                    ${
+                      isActive(path)
+                        ? "bg-green-600 text-white"
+                        : "text-gray-800 hover:bg-green-100 hover:text-green-700"
+                    }`}
+                  aria-current={isActive(path) ? "page" : undefined}
+                  aria-label={`Go to ${label}`}
+                >
+                  {label}
+                </button>
+              );
+            })}
 
-              <div className="mb-10 max-w-3xl">
-                {boldNumbers(desc)}
-              </div>
-
-              <div className="max-w-3xl">
-                <img
-                  src={img}
-                  alt={title}
-                  className="w-full rounded-lg shadow-md object-cover"
-                  style={{ maxHeight: '700px', height: 'auto' }}
-                />
-              </div>
-            </section>
-          ))}
-        </main>
-      </div>
-    </div>
+            {isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => navigateTo("/profile")}
+                  className="block w-full text-left px-6 py-3 text-sm font-semibold text-green-700 hover:bg-green-100 transition"
+                >
+                  👤 View Profile
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    navigateTo("/");
+                  }}
+                  className="block w-full text-left px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-100 transition"
+                >
+                  🔓 Logout
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => navigateTo("/login")}
+                className="block w-full text-left px-6 py-3 text-sm font-semibold text-gray-800 hover:bg-green-100 hover:text-green-700 transition"
+              >
+                LOGIN
+              </button>
+            )}
+          </nav>
+        )}
+      </header>
+    </>
   );
 };
 
-export default AboutUs;
+export default Header;

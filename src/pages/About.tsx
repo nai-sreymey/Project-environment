@@ -164,8 +164,8 @@ const AboutUs = () => {
 
       <Header />
 
-      <div className="max-w-7xl mx-auto px-12 py-10 flex flex-col md:flex-row gap-12">
-        {/* Sidebar nav for md+ (sticky/fixed and scrollable) */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col md:flex-row gap-12">
+        {/* Sidebar nav for md+ */}
         <nav className="hidden md:block md:w-64 md:fixed md:top-24 md:left-0 md:h-[calc(100vh-6rem)] md:overflow-auto md:px-4">
           <ul className="space-y-4">
             {sections.map(({ id, title }) => (
@@ -201,11 +201,11 @@ const AboutUs = () => {
             <LeftArrowIcon />
           </button>
 
-          {/* Scroll container */}
+          {/* Scroll container - full width to show all */}
           <div
             ref={scrollContainerRef}
             className="flex gap-3 overflow-x-auto scroll-smooth hide-scrollbar flex-1"
-            style={{ WebkitOverflowScrolling: 'touch' }}
+            style={{ WebkitOverflowScrolling: 'touch', minWidth: 0 }}
           >
             {sections.map(({ id, title }) => (
               <button
@@ -219,6 +219,7 @@ const AboutUs = () => {
                       : 'bg-green-200 text-green-900 hover:bg-green-300 hover:shadow-md hover:scale-105'
                   }
                   transition transform duration-300 ease-in-out
+                  flex-shrink-0
                 `}
               >
                 {title}
