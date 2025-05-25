@@ -1,222 +1,270 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { motion } from "framer-motion";
 
-// Card UI
-export const Card = ({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={`rounded-2xl bg-white p-6 shadow-md hover:shadow-2xl hover:scale-[1.02] transition-transform duration-300 border border-gray-200 ${className}`}
-    >
-      {children}
-    </div>
-  );
-};
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  start_time: string;
+  end_time: string;
+  createdAt: string;
+  publishedAt: string;
+  publish_date: string | null;
+  publish_by: string | null;
+  participants: string | null;
+  purpose: string | null;
+  number_participants: string | null;
+  manager: string | null;
+  attachments?: { url?: string }[];
+  category?: string;
+}
 
-export const CardContent = ({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return <div className={`mt-2 text-left w-full ${className}`}>{children}</div>;
-};
-
-// Events Data
-const uniqueEvents = Array.from(
-  new Map(
-    [
-      {
-        title: "🌳 Tree Planting Event",
-        description:
-          "Trees are vital for our environment. We plant them on unused land to help improve air quality and provide beauty.",
-        date: "May 20, 2025",
-        time: "8:00 AM - 11:30 AM",
-        location: "Phnom Penh Community Park",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-      {
-        title: "🚫 Plastic-Free Challenge",
-        description:
-          "Can you go one week without plastic? Join our challenge and win eco-friendly prizes!",
-        date: "May 22–28, 2025",
-        time: "All Day",
-        location: "Online & Local Markets",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-      {
-        title: "🎨 Green Art Contest",
-        description:
-          "Express creativity using recycled materials. Show how you care for nature!",
-        date: "May 25, 2025",
-        time: "1:00 PM - 4:00 PM",
-        location: "PSE Art Center Hall",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-      {
-        title: "🏆 Eco Hero Awards",
-        description:
-          "We celebrate those who actively protect our planet—become our Eco Hero!",
-        date: "May 30, 2025",
-        time: "3:00 PM - 6:00 PM",
-        location: "PSE Auditorium",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-      {
-        title: "♻️ Recycling Workshop",
-        description:
-          "Learn how to recycle properly and reduce waste in your daily life.",
-        date: "June 2, 2025",
-        time: "10:00 AM - 1:00 PM",
-        location: "PSE Workshop Room",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-      {
-        title: "🧼 Community Clean-up Day",
-        description:
-          "Join hands to clean the streets and parks. Let’s keep our community clean and green!",
-        date: "June 5, 2025",
-        time: "7:00 AM - 12:00 PM",
-        location: "City Street Area",
-        image: "/images/trees.png",
-        createdBy: "Nai Sreymey",
-      },
-    ].map((e) => [e.title + e.date, e])
-  ).values()
-);
-
-
-
-const EventPage = () => {
+const EventPage: React.FC = () => {
   const navigate = useNavigate();
-  const [visibleCount, setVisibleCount] = useState(3);
-  const [search, setSearch] = useState("");
-  const [reactionMap, setReactionMap] = useState<Record<string, string>>({});
+  const [events, setEvents] = useState<Event[]>([]);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleBackClick = () => navigate(-1);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("http://localhost:1337/api/events");
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+
+        const mappedEvents: Event[] = data.data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          location: item.location,
+          start_time: item.start_time,
+          end_time: item.end_time,
+          createdAt: item.createdAt,
+          publishedAt: item.publishedAt,
+          publish_date: item.publish_date,
+          publish_by: item.publish_by,
+          participants: item.participants,
+          purpose: item.purpose,
+          number_participants: item.number_participants,
+          manager: item.manager,
+          attachments: item.attachments,
+          category: item.category,
+        }));
+
+        setEvents(mappedEvents);
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // Memoize filtered events to avoid unnecessary filtering on every render
+  const filteredEvents = useMemo(
+    () =>
+      events.filter((event) =>
+        event.title.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [events, searchTerm]
+  );
+
+  // Memoize visible events
+  const visibleEvents = useMemo(
+    () => filteredEvents.slice(0, visibleCount),
+    [filteredEvents, visibleCount]
+  );
+
+  // Reset visible count when search term changes
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [searchTerm]);
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 3, filteredEvents.length));
+    setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
   };
 
-  const setReaction = (eventId: string, emoji: string) => {
-    setReactionMap((prev) => ({
-      ...prev,
-      [eventId]: prev[eventId] === emoji ? "" : emoji,
-    }));
+  // Fallback image by category
+  const getFallbackImage = (category?: string) => {
+    const catName = category?.toLowerCase() || "";
+    if (catName.includes("tree")) return "/images/trees.png";
+    if (catName.includes("flower")) return "/images/flower.jpg";
+    return "/images/flowers.png";
   };
-
-  const filteredEvents = uniqueEvents.filter((event) =>
-    event.title.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
-    <div className="bg-green-50 min-h-screen text-center font-sans flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-300 font-sans text-green-900">
       <Header />
-
-      {/* Back Button */}
-      <div className="absolute top-6 left-6 z-10">
-        <button
-          onClick={handleBackClick}
-          className="px-4 py-2 bg-gray-600 text-white rounded-full hover:bg-gray-800 transition duration-200"
-        >
-          ← Back
-        </button>
-      </div>
-
-      {/* Content Section */}
-      <section className="container mx-auto py-14 px-4 md:px-10 flex-grow">
-        <h2 className="text-4xl font-extrabold text-green-900">
-          🌿 PSE Environmental Events
-        </h2>
-        <p className="text-green-700 text-lg mt-3 max-w-2xl mx-auto">
-          Join us to help nature, make friends, and learn new things. Grow,
-          share, and make a positive impact! 🌍
+      <main className="max-w-7xl mx-auto px-6 pt-16 pb-16">
+        <h1 className="text-5xl font-extrabold text-center mb-4 drop-shadow-lg">
+          🌍 Environmental Events
+        </h1>
+        <p className="text-center text-lg text-green-800 max-w-2xl mx-auto mb-10">
+          Join us in creating a sustainable world. Browse and participate in
+          upcoming events near you.
         </p>
 
-        {/* Search Bar */}
-        <div className="mt-8 mb-6">
-          <input
-            type="text"
-            placeholder="🔍 Search events..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md px-5 py-3 rounded-full border border-green-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
-        </div>
+        <label htmlFor="search-events" className="sr-only">
+          Search Events
+        </label>
+        <input
+          id="search-events"
+          type="text"
+          placeholder="🔍 Search events by title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-xl mx-auto block mb-12 px-5 py-3 text-green-900 placeholder-green-600 rounded-xl border-2 border-green-500 shadow-md focus:outline-none focus:ring-4 focus:ring-green-600 transition"
+        />
 
-        {/* Event Cards */}
-        <div className="grid gap-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.slice(0, visibleCount).map((event, index) => {
-            const id = event.title + event.date;
-            const selectedEmoji = reactionMap[id] || "";
-
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card>
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 object-cover rounded-xl"
-                  />
-                  <CardContent>
-                    <h3 className="text-2xl font-bold text-green-900">
-                      {event.title}
-                    </h3>
-                    <hr className="my-2 border-green-200" />
-                    <p className="text-gray-600">{event.description}</p>
-                    <p className="mt-3 text-sm text-gray-500">
-                      📅 {event.date} | 🕒 {event.time}
-                    </p>
-                    <p className="text-sm text-gray-500">📍 {event.location}</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      👤 {event.createdBy}
-                    </p>
-                    <span className="inline-block mt-3 px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                      Environmental
-                    </span>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Show More Button */}
-        {visibleCount < filteredEvents.length && (
-          <div className="mt-14 flex justify-center">
-            <button
-              onClick={handleShowMore}
-              className="px-8 py-4 text-lg bg-green-600 text-white font-semibold rounded-xl shadow-md hover:bg-green-800 transition-all duration-300"
+        {/* Loading spinner */}
+        {loading && (
+          <p className="text-center text-xl font-semibold mt-10 flex justify-center items-center gap-3">
+            <svg
+              className="animate-spin h-6 w-6 text-green-700"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
             >
-              Show More Events
-            </button>
-          </div>
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              ></path>
+            </svg>
+            Loading events...
+          </p>
         )}
-      </section>
 
-      {/* Footer */}
-      <footer className="bg-green-700 text-white py-6 text-center text-sm mt-auto">
-        © 2025 PSE Environmental Events. All rights reserved.
-      </footer>
+        {/* Error message */}
+        {error && (
+          <p className="text-center text-xl font-semibold mt-10 text-red-600">
+            {error}
+          </p>
+        )}
+
+        {/* No events found */}
+        {!loading && !error && visibleEvents.length === 0 && (
+          <p className="text-center text-xl font-semibold mt-10">
+            No events found.
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 gap-16">
+          {!loading &&
+            !error &&
+            visibleEvents.map((event) => {
+              const imageUrl =
+                event.attachments?.[0]?.url || getFallbackImage(event.category);
+
+              return (
+                <div
+                  key={event.id}
+                  className="flex flex-col md:flex-row items-center md:items-stretch gap-10 bg-white bg-opacity-80 border border-green-400 rounded-3xl shadow-xl overflow-hidden transition hover:shadow-2xl"
+                >
+                  <div className="w-full md:w-2/3 h-80 md:h-auto relative">
+                    <motion.img
+                      src={imageUrl}
+                      alt={event.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3 text-green-100 font-medium">
+                      {new Date(event.start_time).toLocaleDateString()} |{" "}
+                      {new Date(event.start_time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      -{" "}
+                      {new Date(event.end_time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="p-6 md:w-1/2 space-y-4">
+                    <h2 className="text-2xl font-bold text-green-800">
+                      {event.title}
+                    </h2>
+                    <p className="text-gray-800 text-sm leading-relaxed">
+                      {event.description.length > 200
+                        ? event.description.slice(0, 200) + "..."
+                        : event.description}
+                    </p>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>
+                        🎯 <strong>Purpose:</strong> {event.purpose || "N/A"}
+                      </p>
+                      <p>📍 Location: {event.location}</p>
+                      <p>
+                        👤 <strong>Manager:</strong> {event.manager || "N/A"}
+                      </p>
+                      <p>
+                        👥 <strong>Participants:</strong>{" "}
+                        {event.participants || "N/A"}
+                      </p>
+                      <p>
+                        🧑‍🤝‍🧑 <strong>Number Participants:</strong>{" "}
+                        {event.number_participants || "N/A"}
+                      </p>
+                      <p>
+                        🗓️ <strong>Publish Date:</strong>{" "}
+                        {event.publish_date
+                          ? new Date(event.publish_date).toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                      <p>
+                        📝 <strong>Published By:</strong>{" "}
+                        {event.publish_by || "N/A"}
+                      </p>
+                      <p>
+                        📢 <strong>Published At:</strong>{" "}
+                        {event.publishedAt
+                          ? new Date(event.publishedAt).toLocaleString()
+                          : "Not published"}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow transition duration-300"
+                      aria-label={`View details for event ${event.title}`}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+
+        {!loading && visibleCount < filteredEvents.length && (
+          <button
+            onClick={handleShowMore}
+            className="mt-16 block mx-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition"
+          >
+            Show More Events
+          </button>
+        )}
+      </main>
     </div>
   );
 };
