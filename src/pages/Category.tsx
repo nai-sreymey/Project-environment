@@ -34,12 +34,13 @@ function CategoryList() {
   const navigate = useNavigate();
 
   const isAuthenticated = !!localStorage.getItem("jwt");
-  const userId = localStorage.getItem("userId");
+  const userId = Number(localStorage.getItem("userId")); // convert to number
 
   useEffect(() => {
     fetchProjects(categoryFilter);
     setVisibleCount(8);
   }, [categoryFilter, showOnlyMyProjects]);
+
   const fetchProjects = (category?: string) => {
     setLoading(true);
     setError(null);
@@ -54,6 +55,8 @@ function CategoryList() {
       url += `&filters[category][category_name][$eq]=${category.toLowerCase()}`;
     }
 
+    console.log("Fetching projects from:", url);
+
     fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch projects");
@@ -62,7 +65,7 @@ function CategoryList() {
       .then((data) => {
         const projectsData = data.data.map((item: any) => ({
           id: item.id,
-          ...item, // Already flattened
+          ...item,
         }));
         setProjects(projectsData.reverse());
         setLoading(false);
@@ -110,10 +113,12 @@ function CategoryList() {
     };
     return new Date(isoDate).toLocaleDateString(undefined, options);
   };
+
   const truncateText = (text: string, wordLimit: number): string => {
     const words = text.split(" ");
     return words.slice(0, wordLimit).join(" ") + (words.length > wordLimit ? "..." : "");
   };
+
   return (
     <>
       <Header />
@@ -246,5 +251,3 @@ function CategoryList() {
 }
 
 export default CategoryList;
-
-
