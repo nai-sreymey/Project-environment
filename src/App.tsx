@@ -10,6 +10,7 @@ import AboutUs from "./pages/About";
 import EventPage from "./pages/Event";
 import ProfilePage from "./pages/Profile";
 import ResetPassword from './pages/ResetPassword';
+import ByMePage from "./pages/BymePage";
 function App() {
   return (
     <Router>
@@ -27,6 +28,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />  
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />           
+        <Route path="/byme" element={<ByMePage  />} />           
 
 
 

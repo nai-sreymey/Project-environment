@@ -56,7 +56,6 @@ const projects = [
   },
 ];
 
-// Stats data
 const statsData = [
   { icon: <FaUsers />, label: "Children Supported", value: 6500 },
   { icon: <FaGraduationCap />, label: "Graduates Hired", value: 4000 },
