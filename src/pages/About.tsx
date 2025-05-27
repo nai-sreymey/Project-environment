@@ -159,7 +159,7 @@ const AboutUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-50 text-gray-900 font-sans">
+    <div className="min-h-screen bg-green-50 text-gray-900 font-inter">
       <Style />
 
       <Header />
@@ -238,13 +238,18 @@ const AboutUs = () => {
         </div>
 
         {/* Main content area */}
-        <main className="flex-1 md:ml-[16rem] space-y-24">
+        <main className="flex-1 md:ml-[16rem] space-y-28">
           {sections.map(({ id, title, desc, img }) => (
-            <section key={id} id={id} className="scroll-mt-24">
-              <h2 className="text-3xl font-bold mb-5 text-green-900">{title}</h2>
-              {/* Use dangerouslySetInnerHTML to render desc with HTML tags (for bold numbers) */}
+            <section
+              key={id}
+              id={id}
+              className="scroll-mt-24 max-w-full md:max-w-4xl mx-auto"
+              tabIndex={-1}
+              aria-label={title}
+            >
+              <h2 className="text-3xl md:text-4xl font-semibold mb-6 text-green-900">{title}</h2>
               <p
-                className="whitespace-pre-line mb-6 text-gray-800"
+                className="whitespace-pre-line mb-8 text-gray-800 text-base md:text-lg leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: desc }}
               />
               <img

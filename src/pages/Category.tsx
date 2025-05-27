@@ -169,7 +169,7 @@ function CategoryList() {
                     loading="lazy"
                   />
                   <div className="flex-grow">
-                    <h3 className="font-extrabold text-xl text-green-700 mb-2 line-clamp-1">
+                    <h3 className="font-semibold text-xl text-green-700 mb-2 line-clamp-1">
                       {project.title}
                     </h3>
                     <p className="text-gray-700 text-sm mb-2 line-clamp-2">
@@ -204,7 +204,7 @@ function CategoryList() {
           <div className="text-center mt-6">
             <button
               onClick={() => setVisibleCount((prev) => prev + 4)}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-md"
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-md"
             >
               Load More
             </button>
@@ -216,3 +216,5 @@ function CategoryList() {
 }
 
 export default CategoryList;
+
+

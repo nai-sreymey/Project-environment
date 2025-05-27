@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 interface Event {
   id: number;
-  title: string;
+  Title: string;
   description: string;
   location: string;
   start_time: string;
@@ -18,47 +18,73 @@ interface Event {
   purpose: string | null;
   number_participants: string | null;
   manager: string | null;
-  attachments?: { url?: string }[];
+  attachments?: {
+    url?: string;
+    formats?: {
+      thumbnail?: { url: string };
+      url: string;
+
+      large?: {
+        url: string;
+      };
+    };
+  }[];
   category?: string;
 }
+
+const BASE_URL = "http://localhost:1337";
+
+const imageUrl = (
+  attachments?: { url?: string; formats?: { large?: { url: string } } }[],
+  category?: string
+): string => {
+  if (attachments && attachments.length > 0) {
+    const largeFormatUrl = attachments[0].formats?.large?.url;
+    if (largeFormatUrl) return BASE_URL + largeFormatUrl;
+    if (attachments[0].url) return BASE_URL + attachments[0].url;
+  }
+
+  switch (category?.toLowerCase()) {
+    case "environment":
+      return "/images/environment-default.jpg";
+    case "water":
+      return "/images/water-default.jpg";
+    case "food":
+      return "/images/food-default.jpg";
+    default:
+      return "/images/default-event.jpg";
+  }
+};
+const getFullImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `http://localhost:1337${url}`;
+};
 
 const EventPage: React.FC = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
-  const [visibleCount, setVisibleCount] = useState(3); // Start with 3 events visible
+  const [visibleCount, setVisibleCount] = useState(3);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+console.log(events)
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("http://localhost:1337/api/events");
+        const res = await fetch(
+          "http://localhost:1337/api/events?populate=attachments"
+        );
         if (!res.ok) throw new Error("Failed to fetch events");
         const data = await res.json();
 
-        const mappedEvents: Event[] = data.data.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          location: item.location,
-          start_time: item.start_time,
-          end_time: item.end_time,
-          createdAt: item.createdAt,
-          publishedAt: item.publishedAt,
-          publish_date: item.publish_date,
-          publish_by: item.publish_by,
-          participants: item.participants,
-          purpose: item.purpose,
-          number_participants: item.number_participants,
-          manager: item.manager,
-          attachments: item.attachments,
-          category: item.category,
-        }));
+  
 
-        setEvents(mappedEvents);
+
+
+        setEvents(data.data);
       } catch (err: any) {
         setError(err.message || "Unknown error");
       } finally {
@@ -69,44 +95,32 @@ const EventPage: React.FC = () => {
     fetchEvents();
   }, []);
 
-  // Filter events by search term
   const filteredEvents = useMemo(
     () =>
       events.filter((event) =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase())
+        event.Title.toLowerCase().includes(searchTerm.toLowerCase())
       ),
     [events, searchTerm]
   );
 
-  // Show only visibleCount number of events
   const visibleEvents = useMemo(
     () => filteredEvents.slice(0, visibleCount),
     [filteredEvents, visibleCount]
   );
 
-  // Reset visibleCount to 3 when search term changes
   useEffect(() => {
     setVisibleCount(3);
   }, [searchTerm]);
 
-  // Load 6 more events on "Show More"
   const handleShowMore = () => {
     setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
   };
 
-  // Fallback image by category
-  const getFallbackImage = (category?: string) => {
-    const catName = category?.toLowerCase() || "";
-    if (catName.includes("tree")) return "/images/trees.png";
-    if (catName.includes("flower")) return "/images/flower.jpg";
-    return "/images/flowers.png";
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-300 font-sans text-green-900">
+    <div className="min-h-screen bg-gradient-to-b bg-green-50  font-inter text-green-900">
       <Header />
       <main className="max-w-7xl mx-auto px-6 pt-16 pb-16">
-        <h1 className="text-5xl font-extrabold text-center mb-4 drop-shadow-lg">
+        <h1 className="text-5xl font-bold text-center mb-4 drop-shadow-lg">
           🌍 Environmental Events
         </h1>
         <p className="text-center text-lg text-green-800 max-w-2xl mx-auto mb-10">
@@ -114,11 +128,7 @@ const EventPage: React.FC = () => {
           upcoming events near you.
         </p>
 
-        <label htmlFor="search-events" className="sr-only">
-          Search Events
-        </label>
         <input
-          id="search-events"
           type="text"
           placeholder="🔍 Search events by title..."
           value={searchTerm}
@@ -126,7 +136,6 @@ const EventPage: React.FC = () => {
           className="w-full max-w-xl mx-auto block mb-12 px-5 py-3 text-green-900 placeholder-green-600 rounded-xl border-2 border-green-500 shadow-md focus:outline-none focus:ring-4 focus:ring-green-600 transition"
         />
 
-        {/* Loading spinner */}
         {loading && (
           <p className="text-center text-xl font-semibold mt-10 flex justify-center items-center gap-3">
             <svg
@@ -154,17 +163,16 @@ const EventPage: React.FC = () => {
           </p>
         )}
 
-        {/* Error message */}
         {error && (
           <p className="text-center text-xl font-semibold mt-10 text-red-600">
             {error}
           </p>
         )}
 
-        {/* No events found */}
         {!loading && !error && visibleEvents.length === 0 && (
-          <p className="text-center text-xl font-semibold mt-10">
-            No events found.
+          <p className="text-center text-xl font-semibold mt-10 text-gray-700">
+            No events match "<strong>{searchTerm}</strong>". Try a different
+            title.
           </p>
         )}
 
@@ -172,28 +180,33 @@ const EventPage: React.FC = () => {
           {!loading &&
             !error &&
             visibleEvents.map((event) => {
-              const imageUrl =
-                event.attachments?.[0]?.url || getFallbackImage(event.category);
-
+              const imageUrl = getFullImageUrl(event.attachments?.[0]?.url);
               return (
-                <div
+                <motion.div
                   key={event.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
                   className="flex flex-col md:flex-row items-center md:items-stretch gap-10 bg-white bg-opacity-80 border border-green-400 rounded-3xl shadow-xl overflow-hidden transition hover:shadow-2xl"
                 >
-                  <div className="w-full md:w-2/3 h-80 md:h-auto relative">
-                    <motion.img
+                  <div className="w-full md:w-2/3 aspect-video md:aspect-auto relative">
+                    <img
                       src={imageUrl}
-                      alt={event.title}
+                      alt={event.Title}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
                     />
+                    {event.category && (
+                      <div className="absolute top-3 right-3 bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+                        {event.category}
+                      </div>
+                    )}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3 text-green-100 font-medium">
                       {new Date(event.start_time).toLocaleDateString()} |{" "}
                       {new Date(event.start_time).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                      })}{" "}
-                      -{" "}
+                      })} {" "}-{" "}
                       {new Date(event.end_time).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -203,18 +216,18 @@ const EventPage: React.FC = () => {
 
                   <div className="p-6 md:w-1/2 space-y-4">
                     <h2 className="text-2xl font-bold text-green-800">
-                      {event.title}
+                      {event.Title}
                     </h2>
                     <p className="text-gray-800 text-sm leading-relaxed">
                       {event.description.length > 200
                         ? event.description.slice(0, 200) + "..."
                         : event.description}
                     </p>
-                    <div className="text-sm text-gray-600 space-y-1">
+                    <div className="text-sm text-gray-600 space-y-1 ">
                       <p>
                         🎯 <strong>Purpose:</strong> {event.purpose || "N/A"}
                       </p>
-                      <p>📍 Location: {event.location}</p>
+                      <p>📍<strong> Location: </strong>{event.location}</p>
                       <p>
                         👤 <strong>Manager:</strong> {event.manager || "N/A"}
                       </p>
@@ -237,33 +250,31 @@ const EventPage: React.FC = () => {
                         {event.publish_by || "N/A"}
                       </p>
                       <p>
-                        📢 <strong>Published At:</strong>{" "}
-                        {event.publishedAt
-                          ? new Date(event.publishedAt).toLocaleString()
-                          : "Not published"}
+                        🕒 <strong>Created At:</strong>{" "}
+                        {new Date(event.createdAt).toLocaleString()}
                       </p>
                     </div>
-
                     <button
-                      onClick={() => navigate(`/events/${event.id}`)}
-                      className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow transition duration-300"
-                      aria-label={`View details for event ${event.title}`}
-                    >
+                      onClick={() => navigate(`/event/${event.id} `)}
+                      className="bg-green-600 text-white rounded-xl py-3 px-8 font-bold hover:bg-green-700 transition"
+                      key={event.id}   >
                       View Details
                     </button>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
         </div>
 
-        {!loading && visibleCount < filteredEvents.length && (
-          <button
-            onClick={handleShowMore}
-            className="mt-16 block mx-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transition"
-          >
-            Show More Events
-          </button>
+        {!loading && !error && visibleCount < filteredEvents.length && (
+          <div className="mt-10 flex justify-center">
+            <button
+              onClick={handleShowMore}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition"
+            >
+              Show More
+            </button>
+          </div>
         )}
       </main>
     </div>

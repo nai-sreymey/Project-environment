@@ -2,14 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ForgotPassword from './pages/Forgot';
 import Projects from "./pages/Category";
 import Detail from './pages/Detail';
 import CreatePost from './pages/Post';
 import AboutUs from "./pages/About";
 import EventPage from "./pages/Event";
 import ProfilePage from "./pages/Profile";
-import ResetPassword from './pages/ResetPassword';
+import EventDetail from "./pages/EventDetail";
 function App() {
   return (
     <Router>
@@ -25,9 +24,7 @@ function App() {
         <Route path="/about" element={<AboutUs />} />     
         <Route path="/event" element={<EventPage />} /> 
         <Route path="/profile" element={<ProfilePage />} />  
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />           
-
+        <Route path="/event/:id" element={<EventDetail />} />  
 
 
       </Routes>
