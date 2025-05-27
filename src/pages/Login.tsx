@@ -1,3 +1,6 @@
+
+
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -47,17 +50,12 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        if (data.error?.message === 'Invalid identifier or password') {
-          setApiError('Account not found or wrong password. Please register first.');
-        } else {
-          setApiError('An error occurred. Please try again.');
-        }
-      } else {
+      if (response.ok) {
+        localStorage.setItem('userId', data.user.id);      // <-- Add this line
         localStorage.setItem('userEmail', data.user.email);
         localStorage.setItem('username', data.user.username);
         localStorage.setItem('jwt', data.jwt);
-        navigate('/');
+        navigate('/post');
       }
     } catch (err) {
       setApiError('Failed to connect to server.');
@@ -90,7 +88,8 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-4 text-center">
-        
+
+
         </div>
         <div className="mt-2 text-center">
           <Link to="/register" className="text-sm text-white hover:text-green-400 underline">

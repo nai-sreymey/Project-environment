@@ -39,8 +39,8 @@ const CreatePost: React.FC = () => {
   const [slideLink, setSlideLink] = useState<string>(""); // single string
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzQ3OTg2MjExLCJleHAiOjE3NTA1NzgyMTF9.LfOckUTEg8bo5ulj3ez0_xLT2qntbLSm9GlSKXYVuD8';
-  console.log(user__data)
+  const token = localStorage.getItem("jwt");;
+  console.log(token)
 
   console.log("======>", category);
 
@@ -86,7 +86,6 @@ const CreatePost: React.FC = () => {
       const mediaFiles = fileInputRef.current?.files || [];
       const mediaIDs: number[] = [];
 
-      // Upload media if available
       if (mediaFiles.length > 0) {
         const formData = new FormData();
         Array.from(mediaFiles).forEach((file) => formData.append("files", file));
@@ -94,7 +93,7 @@ const CreatePost: React.FC = () => {
         const uploadRes = await fetch("http://localhost:1337/api/upload", {
           method: "POST",
           headers: {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzQ3OTg2MjExLCJleHAiOjE3NTA1NzgyMTF9.LfOckUTEg8bo5ulj3ez0_xLT2qntbLSm9GlSKXYVuD8"
+            "Authorization": `Bearer${token}`,
           },
           body: formData,
         });
@@ -107,21 +106,21 @@ const CreatePost: React.FC = () => {
       }
 
       // Construct the payload to match your API
-      const payload = {
-        data: {
-          documentId: crypto.randomUUID(), // or generate how your system expects
-          title,
-          short_description,
-          content,
-          project_status: "padding", // adjust to your logic
-          publish_date: new Date().toISOString(), // or use a form value
-          slideLink,
-          attachments: mediaIDs.map((id) => ({ id })),
-          category: parseInt(category),
-        },
-      };
+      // const payload = {
+      //   data: {
+      //     documentId: crypto.randomUUID(), // or generate how your system expects
+      //     title,
+      //     short_description,
+      //     content,
+      //     project_status: "padding", // adjust to your logic
+      //     publish_date: new Date().toISOString(), // or use a form value
+      //     slideLink,
+      //     attachments: mediaIDs.map((id) => ({ id })),
+      //     category: parseInt(category),
+      //   },
+      // };
 
-      console.log("Submitting payload:", payload);
+      // console.log("Submitting payload:", payload);
 
       const res = await fetch("http://localhost:1337/api/projects", {
         method: "POST",

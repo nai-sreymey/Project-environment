@@ -1,6 +1,9 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { FiBook } from "react-icons/fi";
+
 
 const Header = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -96,11 +99,10 @@ const Header = () => {
                   key={path}
                   onClick={() => navigateTo(path)}
                   className={`text-sm font-semibold px-4 py-2 rounded-full transition
-                    duration-300 ease-in-out transform
-                    ${
-                      isActive(path)
-                        ? "bg-green-600 text-white shadow-lg"
-                        : "text-gray-700 hover:bg-green-100 hover:text-green-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500"
+          duration-300 ease-in-out transform
+          ${isActive(path)
+                      ? "bg-green-600 text-white shadow-lg"
+                      : "text-gray-700 hover:bg-green-100 hover:text-green-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500"
                     }`}
                   aria-current={isActive(path) ? "page" : undefined}
                   aria-label={`Go to ${label}`}
@@ -134,9 +136,8 @@ const Header = () => {
                   </span>
                 </button>
                 <div
-                  className={`absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-xl overflow-hidden z-40 transition-opacity duration-300 ease-in-out ${
-                    isUserDropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                  }`}
+                  className={`absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-xl overflow-hidden z-40 transition-opacity duration-300 ease-in-out ${isUserDropdownOpen ? "opacity-100 visible" : "opacity-0 invisible"
+                    }`}
                   role="menu"
                   aria-label="User dropdown menu"
                 >
@@ -152,6 +153,15 @@ const Header = () => {
                   >
                     👤 View Profile
                   </button>
+                  <button
+                    onClick={() => navigateTo("/byme")}
+                    className="w-full text-left px-6 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 transition flex items-center gap-2"
+                    role="menuitem"
+                    tabIndex={isUserDropdownOpen ? 0 : -1}
+                  >
+                    <FiBook size={18} /> My Projects
+                  </button>
+
                   <button
                     onClick={() => {
                       localStorage.clear();
@@ -203,10 +213,9 @@ const Header = () => {
                   key={path}
                   onClick={() => navigateTo(path)}
                   className={`block w-full text-left px-6 py-3 text-sm font-semibold uppercase transition
-                    ${
-                      isActive(path)
-                        ? "bg-green-600 text-white"
-                        : "text-gray-800 hover:bg-green-100 hover:text-green-700"
+          ${isActive(path)
+                      ? "bg-green-600 text-white"
+                      : "text-gray-800 hover:bg-green-100 hover:text-green-700"
                     }`}
                   aria-current={isActive(path) ? "page" : undefined}
                   aria-label={`Go to ${label}`}

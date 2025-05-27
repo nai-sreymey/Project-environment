@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -13,9 +11,15 @@ interface Project {
   content: string;
   publish_date: string;
   createdAt: string;
+  project_status: string;
   users_permissions_users: { username: string }[];
   category?: { category_name: string };
-  attachments?: { url?: string }[];
+  attachments?: {
+    url?: string;
+    formats?: {
+      large?: { url: string };
+    };
+  }[];
 }
 
 function CategoryList() {
@@ -26,20 +30,26 @@ function CategoryList() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [visibleCount, setVisibleCount] = useState(12);
+  const [showOnlyMyProjects, setShowOnlyMyProjects] = useState(false);
   const navigate = useNavigate();
 
   const isAuthenticated = !!localStorage.getItem("jwt");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     fetchProjects(categoryFilter);
     setVisibleCount(8);
-  }, [categoryFilter]);
-
+  }, [categoryFilter, showOnlyMyProjects]);
   const fetchProjects = (category?: string) => {
     setLoading(true);
     setError(null);
 
-    let url = "http://localhost:1337/api/projects?populate=*";
+    let url = "http://localhost:1337/api/projects?populate=*&filters[project_status][$eq]=approved";
+
+    if (showOnlyMyProjects && userId) {
+      url += `&filters[users_permissions_users][id][$eq]=${userId}`;
+    }
+
     if (category && category !== "") {
       url += `&filters[category][category_name][$eq]=${category.toLowerCase()}`;
     }
@@ -50,7 +60,11 @@ function CategoryList() {
         return res.json();
       })
       .then((data) => {
-        setProjects((data.data as Project[]).reverse());
+        const projectsData = data.data.map((item: any) => ({
+          id: item.id,
+          ...item, // Already flattened
+        }));
+        setProjects(projectsData.reverse());
         setLoading(false);
       })
       .catch((err) => {
@@ -79,6 +93,15 @@ function CategoryList() {
     return "/images/flowers.png";
   };
 
+  const getImageUrl = (attachments?: Project["attachments"]) => {
+    const file = attachments?.[0];
+    return (
+      file?.formats?.large?.url ||
+      file?.url ||
+      getFallbackImage()
+    );
+  };
+
   const formatDate = (isoDate: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -87,12 +110,10 @@ function CategoryList() {
     };
     return new Date(isoDate).toLocaleDateString(undefined, options);
   };
-
   const truncateText = (text: string, wordLimit: number): string => {
     const words = text.split(" ");
     return words.slice(0, wordLimit).join(" ") + (words.length > wordLimit ? "..." : "");
   };
-
   return (
     <>
       <Header />
@@ -108,12 +129,10 @@ function CategoryList() {
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-md">
           <button
             onClick={handleCreateProject}
-            className={`${isAuthenticated
-              ? "bg-green-600 hover:bg-green-700"
-              : "bg-blue-500 hover:bg-green-500"
-              } text-white font-semibold px-4 py-2 rounded-lg shadow-md`}
+            className="flex items-center space-x-3 px-8 py-4 bg-green-600 hover:bg-green-700 shadow-lg rounded-full text-white text-xl font-bold animate-pulse transition duration-300"
           >
-            Create Project +
+            <span>🚀 Create Project</span>
+            <span className="text-2xl">✨</span>
           </button>
 
           <select
@@ -128,6 +147,19 @@ function CategoryList() {
             <option value="energy">Energy</option>
             <option value="others">Others</option>
           </select>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="myProjects"
+              checked={showOnlyMyProjects}
+              onChange={(e) => setShowOnlyMyProjects(e.target.checked)}
+              className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <label htmlFor="myProjects" className="text-sm text-gray-700 font-medium">
+              Create By Me
+            </label>
+          </div>
 
           <div className="relative w-full sm:w-72">
             <input
@@ -154,10 +186,8 @@ function CategoryList() {
               No projects found.
             </p>
           )}
-
           {visibleProjects.map((project) => {
-            const imageUrl =
-              project.attachments?.[0]?.url || getFallbackImage(project.category);
+            const imageUrl = getImageUrl(project.attachments) || getFallbackImage(project.category);
 
             return (
               <Link to={`/detail/${project.id}`} key={project.id}>

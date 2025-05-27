@@ -9,6 +9,8 @@ import AboutUs from "./pages/About";
 import EventPage from "./pages/Event";
 import ProfilePage from "./pages/Profile";
 import EventDetail from "./pages/EventDetail";
+import ResetPassword from './pages/ResetPassword';
+import ByMePage from "./pages/BymePage";
 function App() {
   return (
     <Router>
@@ -25,6 +27,9 @@ function App() {
         <Route path="/event" element={<EventPage />} /> 
         <Route path="/profile" element={<ProfilePage />} />  
         <Route path="/event/:id" element={<EventDetail />} />  
+        <Route path="/reset-password" element={<ResetPassword />} />           
+        <Route path="/byme" element={<ByMePage  />} />           
+
 
 
       </Routes>
