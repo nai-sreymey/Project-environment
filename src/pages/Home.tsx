@@ -211,40 +211,41 @@ const MainPage = () => {
               const imageUrl = getFullImageUrl(project.attachments?.[0]?.url);
               return (
                 <Link to={`/detail/${project.id}`} key={project.id}>
-
-              
-                  <div className="bg-white rounded-2xl shadow-lg p-5 w-full hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col h-full">
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
-                        No Image
-                      </div>
-                    )}
-
-                  <div className="flex flex-col flex-grow">
-                   
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                <div className="bg-white rounded-2xl shadow-lg p-5 w-full hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col h-full">
+                  <img
+                    src={imageUrl}
+                    alt={project.title}
+                    className="w-full h-52 object-cover rounded-xl mb-4"
+                    loading="lazy"
+                  />
+                  <div className="flex-grow">
+                    <h3 className="font-semibold text-xl text-green-700 mb-2 line-clamp-1">
                       {project.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-3">
-                      {project.short_description}
+                    <p className="text-gray-700 text-sm mb-2 line-clamp-2">
+                      <strong>Short Description:</strong>{" "}
+                      {(project.short_description, 20)}
                     </p>
-                    <p className="text-xs mb-1 text-green-700 font-semibold">
-                      {project.category?.category_name || "Uncategorized"}
+                    <p className="text-gray-700 text-sm mb-2 line-clamp-2">
+                      <strong>Content:</strong> {(project.content, 20)}
                     </p>
-                    <div className="mt-auto flex justify-between items-center text-xs text-gray-400">
-                      <span>By {project.users_permissions_users[0]?.username || "Unknown"}</span>
-                      <span>{formatDate(project.publish_date || project.createdAt)}</span>
-                    </div>
+                  </div>
+                  <div className="text-gray-800 text-xs mt-auto border-t border-green-200 pt-3">
+                    <p>
+                      <strong className="text-green-700">Created by:</strong>{" "}
+                      {project.users_permissions_users?.[0]?.username || "Unknown"}
+                    </p>
+                    <p>
+                      <strong className="text-green-700">Published on:</strong>{" "}
+                      {formatDate(project.publish_date)}
+                    </p>
+                    <p>
+                      <strong className="text-green-700">Category:</strong>{" "}
+                      {project.category?.category_name || "N/A"}
+                    </p>
                   </div>
                 </div>
-                </Link>
+              </Link>
 
               );
               

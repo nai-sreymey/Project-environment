@@ -1,27 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 
 const ProfilePage = () => {
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState("/images/profile.png");
   const [isEditing, setIsEditing] = useState(false);
-  const [tempBio, setTempBio] = useState(bio);
+  const [tempBio, setTempBio] = useState("");
   const [newImage, setNewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const username = localStorage.getItem("username") || "Your Name";
   const email = localStorage.getItem("userEmail") || "your@email.com";
 
+  // Load saved bio and profile image on page load
+  useEffect(() => {
+    const savedBio = localStorage.getItem("userBio");
+    const savedImage = localStorage.getItem("userProfileImage");
+    if (savedBio) setBio(savedBio);
+    if (savedImage) setProfileImage(savedImage);
+  }, []);
+
   const handleEditClick = () => {
-    setIsEditing(true);
     setTempBio(bio);
+    setIsEditing(true);
   };
 
   const handleSaveClick = () => {
     setLoading(true);
     setTimeout(() => {
       setBio(tempBio);
-      if (newImage) setProfileImage(newImage);
+      localStorage.setItem("userBio", tempBio);
+      if (newImage) {
+        setProfileImage(newImage);
+        localStorage.setItem("userProfileImage", newImage);
+
+        // Dispatch custom event to update Header image
+        window.dispatchEvent(new Event("profileImageChanged"));
+      }
       setIsEditing(false);
       setLoading(false);
       alert("Profile updated successfully!");
@@ -31,8 +46,12 @@ const ProfilePage = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setNewImage(imageURL);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result as string;
+        setNewImage(base64Image);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -43,7 +62,7 @@ const ProfilePage = () => {
     >
       <Header />
       <div className="flex justify-center items-center py-20 px-6">
-        <h1 className="sr-only">Welcome to the profile</h1>
+        <h1 className="sr-only">Profile</h1>
         <div className="bg-white rounded-2xl shadow-2xl p-12 w-full max-w-3xl text-center min-h-[700px] flex flex-col justify-between">
           <div>
             <div className="relative">
@@ -60,13 +79,10 @@ const ProfilePage = () => {
                     onChange={handleImageChange}
                     className="hidden"
                     id="imageUpload"
-                    aria-label="Change profile picture"
                   />
                   <label
                     htmlFor="imageUpload"
                     className="cursor-pointer bg-green-600 text-white px-3 py-1 text-sm rounded shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    role="button"
-                    tabIndex={0}
                   >
                     Change
                   </label>
