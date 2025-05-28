@@ -49,7 +49,7 @@ const statsData = [
 const getFullImageUrl = (url?: string) => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
-  return `http://localhost:1337${url}`;
+  return `http://pse-eco-sharing-be.final25.psewmad.org${url}`;
 };
 
 const formatDate = (isoDate: string) => {
@@ -76,7 +76,7 @@ const MainPage = () => {
   const fetchProjects = () => {
     setLoading(true);
     setError(null);
-    fetch("http://localhost:1337/api/projects?populate=*")
+    fetch("http://pse-eco-sharing-be.final25.psewmad.org/api/projects?populate=*")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch projects");
         return res.json();

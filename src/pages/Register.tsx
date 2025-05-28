@@ -41,7 +41,7 @@ const Register = () => {
     if (validate()) {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:1337/api/auth/local/register', {
+        const response = await fetch('http://pse-eco-sharing-be.final25.psewmad.org/api/auth/local/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

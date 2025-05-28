@@ -45,7 +45,7 @@ function CategoryList() {
     setLoading(true);
     setError(null);
 
-    let url = "http://localhost:1337/api/projects?populate=*&filters[project_status][$eq]=approved";
+    let url = "http://pse-eco-sharing-be.final25.psewmad.org/api/projects?populate=*&filters[project_status][$eq]=approved";
 
     if (showOnlyMyProjects && userId) {
       url += `&filters[users_permissions_users][id][$eq]=${userId}`;

@@ -38,7 +38,7 @@ const EventDetail: React.FC = () => {
     const fetchProject = async () => {
       try {
         const res = await fetch(
-          `http://localhost:1337/api/events?filters[id][$in]=${id}&populate=*`
+          `http://pse-eco-sharing-be.final25.psewmad.org/api/events?filters[id][$in]=${id}&populate=*`
         );
         if (!res.ok) throw new Error("Failed to fetch project details");
         const data = await res.json();

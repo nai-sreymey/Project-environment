@@ -33,7 +33,7 @@ interface Event {
   category?: string;
 }
 
-const BASE_URL = "http://localhost:1337";
+const BASE_URL = "http://pse-eco-sharing-be.final25.psewmad.org";
 
 const imageUrl = (
   attachments?: { url?: string; formats?: { large?: { url: string } } }[],
@@ -59,7 +59,7 @@ const imageUrl = (
 const getFullImageUrl = (url?: string) => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
-  return `http://localhost:1337${url}`;
+  return `http://pse-eco-sharing-be.final25.psewmad.org${url}`;
 };
 
 const EventPage: React.FC = () => {
@@ -76,7 +76,7 @@ console.log(events)
       setError(null);
       try {
         const res = await fetch(
-          "http://localhost:1337/api/events?populate=attachments"
+          "http://pse-eco-sharing-be.final25.psewmad.org/api/events?populate=attachments"
         );
         if (!res.ok) throw new Error("Failed to fetch events");
         const data = await res.json();

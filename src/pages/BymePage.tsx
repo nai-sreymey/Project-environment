@@ -45,7 +45,7 @@ const ByMePage: React.FC = () => {
         const fetchProjects = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:1337/api/projects?filters[users_permissions_users][id][$eq]=${userId}&populate=*`
+                    `http://pse-eco-sharing-be.final25.psewmad.org/api/projects?filters[users_permissions_users][id][$eq]=${userId}&populate=*`
                 );
 
                 if (!res.ok) {
