@@ -1,8 +1,9 @@
+version: '3.8'
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:3309:80"  # Host port 3309 mapped to container port 80
+      - "127.0.0.1:3309:80"
     container_name: react-frontend

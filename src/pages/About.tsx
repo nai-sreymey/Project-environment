@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 
-interface Section {
-  id: string;
-  title: string;
-  desc: string;
-  img: string;
-}
-
-const sections: Section[] = [
+const sections = [
   {
     id: 'glance',
     title: 'PSE At A Glance',
@@ -27,7 +20,7 @@ This project fully engages PSE in environmental protection by developing environ
 <strong>2.</strong> Implement eco-facilities and conduct environmental activities
 <strong>3.</strong> Develop partnerships and community outreach
 <strong>4.</strong> Integrate environmental rules into PSE policy
-    `,
+`,
     img: '/images/about1.png',
   },
   {
@@ -42,7 +35,7 @@ The objectives of environmental education are:
 - Raise environmental awareness among students and staff with scientific information and discussions about causes, consequences, impacts, effects, and solutions.
 - Facilitate student participation in activities that align with the curriculum and PSE's needs.
 - Encourage and motivate students to respect the environment and contribute to sustainable development.
-    `,
+`,
     img: '/images/about2.png',
   },
   {
@@ -58,7 +51,7 @@ A vegetarian meal is introduced monthly to raise awareness about food and the en
 In 2024, energy saving efforts included installing 100% LED lighting at PSE and establishing an Energy Saving Competition.
 
 In 2025, work is ongoing to renovate green spaces at PSE, including improving landscapes, gardens (plant reproduction, tree planting, and vegetable production).
-    `,
+`,
     img: '/images/about1.png',
   },
   {
@@ -70,7 +63,7 @@ The Eco-Club is an active youth group passionate about making a positive impact 
 Supportive members: Every student can join as a supportive member, participating in weekend activities to learn and help implement projects.
 
 Join us if you want to deepen your environmental knowledge, become an Eco-Club member, or support occasionally. You are always welcome!
-    `,
+`,
     img: '/images/about3.png',
   },
   {
@@ -80,7 +73,7 @@ Join us if you want to deepen your environmental knowledge, become an Eco-Club m
 PSE cannot protect the environment alone. We actively seek partnerships with government bodies (including the Ministry of Environment, Cambodia Agriculture Research and Development Institute - CARDI, Ministry of Agriculture, Forestry and Fisheries), NGOs, public schools, private companies, and especially PSE family committees.
 
 Partnerships allow beneficiaries to learn and explore different sectors. They gain broader perspectives and understand the various roles and missions of institutions working towards the shared goal of a sustainable future.
-    `,
+`,
     img: '/images/about4.png',
   },
   {
@@ -135,8 +128,8 @@ const RightArrowIcon = () => (
 
 const Style = () => <style>{style}</style>;
 
-const AboutUs: React.FC = () => {
-  const [activeId, setActiveId] = useState<string>(sections[0].id);
+const AboutUs = () => {
+  const [activeId, setActiveId] = useState(sections[0].id);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -151,24 +144,17 @@ const AboutUs: React.FC = () => {
       }
       setActiveId(current);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Update activeId immediately for better UX
-      setActiveId(id);
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const scrollLeft = () => {
     scrollContainerRef.current?.scrollBy({ left: -150, behavior: 'smooth' });
   };
-
   const scrollRight = () => {
     scrollContainerRef.current?.scrollBy({ left: 150, behavior: 'smooth' });
   };
@@ -176,16 +162,16 @@ const AboutUs: React.FC = () => {
   return (
     <div className="min-h-screen bg-green-50 text-gray-900 font-inter">
       <Style />
+
       <Header />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col md:flex-row gap-12">
-        {/* Sidebar for md+ */}
-        <nav className="hidden md:block md:w-64 md:fixed md:top-24 md:left-0 md:h-[calc(100vh-6rem)] md:overflow-auto md:px-4" aria-label="About Us Navigation">
+        {/* Sidebar nav for md+ */}
+        <nav className="hidden md:block md:w-64 md:fixed md:top-24 md:left-0 md:h-[calc(100vh-6rem)] md:overflow-auto md:px-4">
           <ul className="space-y-4">
             {sections.map(({ id, title }) => (
               <li key={id}>
                 <button
-                  type="button"
                   onClick={() => scrollTo(id)}
                   className={`
                     w-full text-left px-5 py-3 rounded-lg font-semibold transition
@@ -197,7 +183,6 @@ const AboutUs: React.FC = () => {
                         : 'text-green-800 hover:bg-green-200 hover:text-green-900 hover:shadow-lg hover:scale-105'
                     }
                   `}
-                  aria-current={activeId === id ? 'page' : undefined}
                 >
                   {title}
                 </button>
@@ -206,8 +191,9 @@ const AboutUs: React.FC = () => {
           </ul>
         </nav>
 
-        {/* Horizontal scroll nav on small screens */}
-        <div className="md:hidden flex items-center gap-2 px-2" role="navigation" aria-label="About Us Navigation">
+        {/* Horizontal scroll nav with arrows on small screens */}
+        <div className="md:hidden flex items-center gap-2 px-2">
+          {/* Left arrow */}
           <button
             onClick={scrollLeft}
             aria-label="Scroll left"
@@ -216,6 +202,7 @@ const AboutUs: React.FC = () => {
             <LeftArrowIcon />
           </button>
 
+          {/* Scroll container - full width to show all */}
           <div
             ref={scrollContainerRef}
             className="flex gap-3 overflow-x-auto scroll-smooth hide-scrollbar flex-1"
@@ -224,7 +211,6 @@ const AboutUs: React.FC = () => {
             {sections.map(({ id, title }) => (
               <button
                 key={id}
-                type="button"
                 onClick={() => scrollTo(id)}
                 className={`
                   whitespace-nowrap px-6 py-2 rounded-lg font-semibold
@@ -236,13 +222,13 @@ const AboutUs: React.FC = () => {
                   transition transform duration-300 ease-in-out
                   flex-shrink-0
                 `}
-                aria-current={activeId === id ? 'page' : undefined}
               >
                 {title}
               </button>
             ))}
           </div>
 
+          {/* Right arrow */}
           <button
             onClick={scrollRight}
             aria-label="Scroll right"
@@ -252,23 +238,27 @@ const AboutUs: React.FC = () => {
           </button>
         </div>
 
-        {/* Content Sections */}
-        <main className="md:ml-72 flex flex-col gap-20 w-full max-w-4xl">
+        {/* Main content area */}
+        <main className="flex-1 md:ml-[16rem] space-y-28">
           {sections.map(({ id, title, desc, img }) => (
-            <section key={id} id={id} className="scroll-mt-24">
-              <h2 className="text-3xl font-bold text-green-900 mb-4">{title}</h2>
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <img
-                  src={img}
-                  alt={`Illustration for ${title}`}
-                  className="w-full md:w-1/2 max-h-80 object-contain rounded-lg shadow-lg"
-                  loading="lazy"
-                />
-                <article
-                  className="prose max-w-none md:w-1/2 text-green-900"
-                  dangerouslySetInnerHTML={{ __html: desc.replace(/\n/g, '<br/>') }}
-                />
-              </div>
+            <section
+              key={id}
+              id={id}
+              className="scroll-mt-24 max-w-full md:max-w-4xl mx-auto"
+              tabIndex={-1}
+              aria-label={title}
+            >
+              <h2 className="text-3xl md:text-4xl font-semibold mb-6 text-green-900">{title}</h2>
+              <p
+                className="whitespace-pre-line mb-8 text-gray-800 text-base md:text-lg leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: desc }}
+              />
+              <img
+                src={img}
+                alt={title}
+                className="w-full rounded-lg shadow-md object-cover"
+                style={{ maxHeight: '500px', height: 'auto' }}
+              />
             </section>
           ))}
         </main>
