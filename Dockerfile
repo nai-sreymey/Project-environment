@@ -1,31 +1,21 @@
-# Stage 1: Build
-FROM node:20 AS builder
+# Stage 1: Build the app
+FROM node:18-alpine as builder
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json* ./
+COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the source code
 COPY . .
-
-# Build the app
 RUN npm run build
 
-# Stage 2: Serve using Vite preview
-FROM node:20
-
-WORKDIR /app
-
-# Install Vite globally
-RUN npm install -g vite
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
 
 # Copy built files from builder
-COPY --from=builder /app /app
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose the default preview port
-EXPOSE 4173
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Serve the app using Vite's built-in preview server
-CMD ["vite", "preview", "--host"]
+EXPOSE 80

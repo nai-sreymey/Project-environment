@@ -2,8 +2,9 @@ services:
   web:
     build: .
     ports:
-      - "3309:80"
+      - "3309:4173"
+    volumes:
+      - .:/app
     environment:
       - NODE_ENV=production
       - API_URL=${API_URL}
-
