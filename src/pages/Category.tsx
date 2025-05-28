@@ -130,7 +130,7 @@ function CategoryList() {
         </div>
       )}
 
-      <main className="px-6 md:px-24 py-10 bg-green-100 min-h-screen">
+      <main className="px-6 md:px-24 py-10 bg-green-50 min-h-screen">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-md">
           <button
             onClick={handleCreateProject}
