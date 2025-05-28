@@ -39,7 +39,7 @@ const Login = () => {
     setApiError('');
 
     try {
-      const response = await fetch('http://pse-eco-sharing-be.final25.psewmad.org/api/auth/local', {
+      const response = await fetch('https://pse-eco-sharing-be.final25.psewmad.org/api/auth/local', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

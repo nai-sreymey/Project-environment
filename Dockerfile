@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:18-alpine AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve using Vite preview
-FROM node:18-alpine
+FROM node:20
 
 WORKDIR /app
 
