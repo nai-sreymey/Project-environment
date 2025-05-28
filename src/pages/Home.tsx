@@ -19,8 +19,8 @@ const Counter = ({ value }: { value: number }) => {
   const [count, setCount] = useState(0);
   useEffect(() => {
     let current = 0;
-    const duration = 3000; // 5 seconds
-    const step = Math.max(1, Math.floor(value / 100)); // try 100 steps max
+    const duration = 3000;
+    const step = Math.max(1, Math.floor(value / 100));
     const steps = Math.ceil(value / step);
     const intervalTime = duration / steps;
 
@@ -36,16 +36,20 @@ const Counter = ({ value }: { value: number }) => {
     return () => clearInterval(timer);
   }, [value]);
 
-  return <p className="text-4xl font-bold text-green-700">{count.toLocaleString()}</p>;
+  return (
+    <p className="text-3xl md:text-4xl font-extrabold text-green-700 drop-shadow-md transition-all duration-500">
+      {count.toLocaleString()}
+    </p>
+  );
 };
 
-// Stats data
 const statsData = [
   { icon: <FaUsers />, label: "Children Supported", value: 6500 },
   { icon: <FaGraduationCap />, label: "Graduates Hired", value: 4000 },
   { icon: <FaHandsHelping />, label: "Staff Members", value: 650 },
   { icon: <FaAward />, label: "Human Rights Awards", value: 12 },
 ];
+
 const getFullImageUrl = (url?: string) => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
@@ -109,85 +113,85 @@ const MainPage = () => {
     navigate("/projects");
   };
 
-  // New: Handle clicking a project card
-  const handleCardClick = (projectId: number) => {
-    navigate(`/projects/${projectId}`);
-  };
-
   return (
     <>
       <Header />
-
-      <div className="bg-green-50 min-h-screen max-w-auto mx-auto px-6 md:px-36">
+      <div className="bg-green-50 min-h-screen px-6 md:px-36 pb-20">
         {isNavigating && (
-          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-30 z-50 flex items-center justify-center">
-            <div className="loader"></div>
+          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
+            <div className="loader ease-linear rounded-full border-8 border-t-8 border-green-500 h-20 w-20"></div>
           </div>
         )}
 
         {/* Hero Section */}
-        <section className="relative w-full h-72 md:h-96 overflow-hidden rounded-lg mb-16 ">
+        <section className="relative w-full h-72 md:h-96 overflow-hidden rounded-lg mb-20 shadow-lg">
           <video
-            className="absolute w-full h-full object-cover brightness-75"
+            className="absolute w-full h-full object-cover brightness-60"
             autoPlay
             loop
             muted
             playsInline
             src="https://www.w3schools.com/howto/rain.mp4"
           ></video>
-          <div className="absolute inset-0 bg-black/50"></div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 md:px-20">
-            <h1 className="text-4xl md:text-6xl font-semibold text-white drop-shadow-lg mb-4">
-              🌍 Save the Earth, Shape the Future!
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30"></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 md:px-20 text-white select-none">
+            <h1 className="text-4xl md:text-6xl font-extrabold drop-shadow-lg mb-5 animate-fadeInUp">
+              🌍 Love the environment like you love your life.
             </h1>
-            <p className="text-green-300 text-lg md:text-3xl max-w-3xl font-semibold drop-shadow-md mb-8">
-              Let’s act together for a sustainable world. Every small effort counts.
+            <p className="text-green-300 text-lg md:text-3xl max-w-3xl font-semibold drop-shadow-md mb-10 animate-fadeInUp delay-200">
+              Protect Earth, protect ourselves. Every action counts.
             </p>
             <button
               onClick={handleCreateProject}
-              className="flex items-center space-x-3 px-8 py-4 bg-green-600 hover:bg-green-700 shadow-lg rounded-full text-white text-xl font-semibold animate-pulse transition duration-300"
+              className="flex items-center space-x-4 px-10 py-4 bg-green-600 hover:bg-green-700 shadow-xl rounded-full text-white text-xl font-bold animate-pulse transition duration-300 ease-in-out transform hover:scale-105"
+              aria-label="Create Project"
             >
               <span>🚀 Create Project</span>
-              <span className="text-2xl">✨</span>
+              <span className="text-3xl">✨</span>
             </button>
           </div>
         </section>
 
         {/* About Section */}
-        <section className="py-12 lg:border-b lg:border-green-800">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section className="py-14 lg:border-b lg:border-green-800">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-green-900 mb-4">About PSE Cambodia</h2>
-              <p className="text-gray-800 text-lg mb-8 max-w-lg leading-relaxed">
+              <h2 className="text-5xl font-extrabold text-green-900 mb-6 tracking-tight">About PSE Cambodia</h2>
+              <p className="text-gray-900 text-xl mb-8 max-w-lg leading-relaxed tracking-wide">
                 Pour un Sourire d’Enfant – For a Child’s Smile (PSE) is a non-profit organization operating in Cambodia since 1995 to help children suffering acute hardship by reintegrating them into society. PSE provides a safe environment and quality education to break the cycle of poverty.
               </p>
               <button
                 onClick={handleShowMoreAbout}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md transition duration-300"
+                className="bg-green-700 hover:bg-green-800 text-white font-bold px-8 py-4 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400"
               >
                 Show More
               </button>
 
-              <div className="grid grid-cols-2 gap-6 text-green-900 mt-10">
+              {/* Stats Section */}
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-8 text-green-900 mt-12">
                 {statsData.map(({ icon, label, value }, idx) => (
-                  <div key={idx} className="flex items-center space-x-3">
-                    <div className="text-4xl text-green-600">{icon}</div>
+                  <div
+                    key={idx}
+                    className="flex items-center space-x-4 bg-white rounded-xl p-4 md:p-5 shadow-md hover:shadow-xl transition-shadow duration-400 ease-in-out"
+                  >
+                    <div className="text-3xl md:text-4xl text-green-600 animate-pulse">{icon}</div>
                     <div>
                       <Counter value={value} />
-                      <p className="text-sm font-semibold">{label}</p>
+                      <p className="text-sm md:text-base font-semibold tracking-wide">{label}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 rounded-2xl shadow-lg overflow-hidden">
+            {/* IMAGE GRID */}
+            <div className="grid grid-cols-2 gap-6 rounded-3xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-500 ease-in-out">
               {["pse1.png", "pse2.png", "pse3.png", "pse4.png"].map((img, idx) => (
                 <img
                   key={idx}
                   src={`/images/${img}`}
-                  alt={`Environment ${idx + 1}`}
-                  className="w-full h-52 md:h-64 object-cover transition-transform duration-300 hover:scale-105"
+                  alt={`PSE Image ${idx + 1}`}
+                  className="w-full h-60 md:h-72 object-cover rounded-lg hover:brightness-110 transition duration-300"
                   loading="lazy"
                 />
               ))}
@@ -196,11 +200,11 @@ const MainPage = () => {
         </section>
 
         {/* Projects Section */}
-        <section className="bg-green-50 flex items-center justify-between py-6 mt-10">
-          <h2 className="text-4xl font-bold text-green-900">Projects</h2>
+        <section className="flex items-center justify-between py-6 mt-16">
+          <h2 className="text-4xl font-extrabold text-green-900 tracking-tight">Projects</h2>
           <button
             onClick={handleSeeAllProjects}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full shadow-md transition duration-300"
+            className="bg-green-700 hover:bg-green-800 text-white font-bold px-6 py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
           >
             See All
           </button>
@@ -208,56 +212,50 @@ const MainPage = () => {
 
         {/* Project Cards */}
         <main className="pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {loading && <p>Loading projects...</p>}
-          {error && <p className="text-red-600">Error: {error}</p>}
-          {!loading && !error && projects.length === 0 && <p>No projects found.</p>}
+          {loading && (
+            <p className="col-span-full text-center text-green-700 font-semibold text-lg animate-pulse">
+              Loading projects...
+            </p>
+          )}
+          {error && (
+            <p className="col-span-full text-center text-red-600 font-semibold text-lg">{`Error: ${error}`}</p>
+          )}
+          {!loading && !error && projects.length === 0 && (
+            <p className="col-span-full text-center text-gray-700 font-semibold text-lg">No projects found.</p>
+          )}
 
-          {!loading &&
-            !error &&
-            projects.slice(0, 4).map((project) => {
-              const imageUrl = getFullImageUrl(project.attachments?.[0]?.url);
-              return (
-                <Link to={`/detail/${project.id}`} key={project.id}>
-                <div className="bg-white rounded-2xl shadow-lg p-5 w-full hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col h-full">
+          {projects.map(({ id, title, short_description, content, publish_date, createdAt, users_permissions_users, category, attachments }) => {
+            const firstUser = users_permissions_users[0];
+            const imageUrl = attachments && attachments[0]?.url ? getFullImageUrl(attachments[0].url) : "/images/placeholder-image.jpg";
+
+            return (
+              <div
+                key={id}
+                className="flex flex-col justify-between shadow-lg hover:shadow-2xl bg-white rounded-xl p-5 cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
+              >
+                <div>
                   <img
                     src={imageUrl}
-                    alt={project.title}
-                    className="w-full h-52 object-cover rounded-xl mb-4"
+                    alt={title}
                     loading="lazy"
+                    className="w-full h-48 rounded-xl object-cover mb-3"
                   />
-                  <div className="flex-grow">
-                    <h3 className="font-semibold text-xl text-green-700 mb-2 line-clamp-1">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-700 text-sm mb-2 line-clamp-2">
-                      <strong>Short Description:</strong>{" "}
-                      {(project.short_description, 20)}
-                    </p>
-                    <p className="text-gray-700 text-sm mb-2 line-clamp-2">
-                      <strong>Content:</strong> {(project.content, 20)}
-                    </p>
-                  </div>
-                  <div className="text-gray-800 text-xs mt-auto border-t border-green-200 pt-3">
-                    <p>
-                      <strong className="text-green-700">Created by:</strong>{" "}
-                      {project.users_permissions_users?.[0]?.username || "Unknown"}
-                    </p>
-                    <p>
-                      <strong className="text-green-700">Published on:</strong>{" "}
-                      {formatDate(project.publish_date)}
-                    </p>
-                    <p>
-                      <strong className="text-green-700">Category:</strong>{" "}
-                      {project.category?.category_name || "N/A"}
-                    </p>
-                  </div>
+                  <p className="text-green-900 font-bold text-xs mb-1">
+                    {category?.category_name || "Uncategorized"}
+                  </p>
+                  <h3 className="text-lg font-semibold text-green-900 mb-2">{title}</h3>
+                  <p className="text-gray-700 text-sm mb-3 line-clamp-3">{short_description || content}</p>
                 </div>
-              </Link>
-
-              );
-              
-            })}
-            
+                <div className="text-green-800 font-semibold text-xs flex justify-between items-center">
+                  <p>
+                    Posted by:{" "}
+                    <span className="text-green-900 font-bold">{firstUser?.username || "Unknown"}</span>
+                  </p>
+                  <p>{formatDate(publish_date || createdAt)}</p>
+                </div>
+              </div>
+            );
+          })}
         </main>
       </div>
     </>
