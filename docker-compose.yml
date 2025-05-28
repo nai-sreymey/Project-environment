@@ -1,9 +1,10 @@
-version: '3.8'
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  web:
+    build: .
     ports:
-      - "127.0.0.1:3309:80"
-    container_name: react-frontend
+      - "3309:4173"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=production
+      - API_URL=${API_URL}

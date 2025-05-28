@@ -54,7 +54,7 @@ const EventDetail: React.FC = () => {
     if (id) fetchProject();
   }, [id]);
 
-  const handleBackClick = () => navigate("/projects");
+  const handleBackClick = () => navigate("/event");
 
   const formatDate = (isoDate: string | null) => {
     if (!isoDate) return "N/A";
@@ -206,6 +206,16 @@ const EventDetail: React.FC = () => {
                 minute: "2-digit",
               })}
             </p>
+          </div>
+          <div className="flex justify-center gap-6 pt-8">
+            <button
+              onClick={handleBackClick}
+              className="px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-900 transition-all shadow-md"
+            >
+              ← Back to Event
+            </button>
+        
+            
           </div>
         </div>
       </section>

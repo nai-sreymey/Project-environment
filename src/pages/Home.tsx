@@ -10,6 +10,7 @@ interface Project {
   content: string;
   publish_date: string;
   createdAt: string;
+  project_status: string;
   users_permissions_users: { username: string }[];
   category?: { category_name: string };
   attachments?: { url?: string }[];
@@ -73,10 +74,13 @@ const MainPage = () => {
     fetchProjects();
   }, []);
 
-  const fetchProjects = () => {
+  const fetchProjects = (category?: string) => {
     setLoading(true);
     setError(null);
-    fetch("http://pse-eco-sharing-be.final25.psewmad.org/api/projects?populate=*")
+
+    let url = "http://pse-eco-sharing-be.final25.psewmad.org/api/projects?populate=*&filters[project_status][$eq]=approved";
+
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch projects");
         return res.json();
@@ -134,7 +138,8 @@ const MainPage = () => {
               🌍 Love the environment like you love your life.
             </h1>
             <p className="text-green-300 text-lg md:text-3xl max-w-3xl font-semibold drop-shadow-md mb-8">
-            Protect Earth, protect ourselves. Every action counts.            </p>
+              Protect Earth, protect ourselves. Every action counts.
+            </p>
             <button
               onClick={handleCreateProject}
               className="flex items-center space-x-3 px-8 py-4 bg-green-600 hover:bg-green-700 shadow-lg rounded-full text-white text-xl font-semibold animate-pulse transition duration-300"
