@@ -114,7 +114,7 @@ const ByMePage: React.FC = () => {
                                         src={
                                             imageUrl.startsWith("http")
                                                 ? imageUrl
-                                                : `http://localhost:1337${imageUrl}`
+                                                : `http://pse-eco-sharing-be.final25.psewmad.org${imageUrl}`
                                         }
                                         alt={project.title}
                                         className="w-full h-52 object-cover rounded-xl mb-4"
