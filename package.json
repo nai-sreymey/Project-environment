@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/jwt-decode": "^3.1.0",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.3.4",

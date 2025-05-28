@@ -234,6 +234,14 @@ const Header = () => {
                   👤 View Profile
                 </button>
                 <button
+                    onClick={() => navigateTo("/byme")}
+                    className="w-full text-left px-6 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 transition flex items-center gap-2"
+                    role="menuitem"
+                    tabIndex={isUserDropdownOpen ? 0 : -1}
+                  >
+                    <FiBook size={18} /> My Projects
+                  </button>
+                <button
                   onClick={() => {
                     localStorage.clear();
                     navigateTo("/");

@@ -156,8 +156,8 @@ const CreatePost: React.FC = () => {
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
-        navigate("/");
-      }, 4000);
+        navigate("/byme");
+      }, 3000);
     } catch (err: any) {
       alert("Error: " + err.message);
     } finally {
@@ -318,13 +318,19 @@ const CreatePost: React.FC = () => {
         </div>
 
         <button
-          onClick={handleSubmit}
-          disabled={!canSubmit || isLoading}
-          className={`w-full py-3 text-white font-bold rounded-md ${canSubmit ? "bg-green-600 hover:bg-green-700" : "bg-gray-400 cursor-not-allowed"
-            }`}
-        >
-          Submit Project
-        </button>
+  onClick={handleSubmit}
+  disabled={!canSubmit || isLoading}
+  className={`w-full py-3 text-white font-bold rounded-md transition-colors duration-300 ${
+    canSubmit && !isLoading
+      ? "bg-green-600 hover:bg-green-700"
+      : isLoading
+      ? "bg-green-500 cursor-wait"
+      : "bg-gray-400 cursor-not-allowed"
+  }`}
+>
+  {isLoading ? "Submitting Project..." : "Submit Project"}
+</button>
+
       </div>
     </div>
   );

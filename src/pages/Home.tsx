@@ -18,27 +18,34 @@ interface Project {
 const Counter = ({ value }: { value: number }) => {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) return;
-    let stepTime = Math.abs(Math.floor(2000 / end));
-    let timer = setInterval(() => {
-      start += 1;
-      setCount(start);
-      if (start === end) clearInterval(timer);
-    }, stepTime);
+    let current = 0;
+    const duration = 3000; // 5 seconds
+    const step = Math.max(1, Math.floor(value / 100)); // try 100 steps max
+    const steps = Math.ceil(value / step);
+    const intervalTime = duration / steps;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= value) {
+        current = value;
+        clearInterval(timer);
+      }
+      setCount(current);
+    }, intervalTime);
+
     return () => clearInterval(timer);
   }, [value]);
-  return <p className="text-4xl font-bold text-green-700">{count}</p>;
+
+  return <p className="text-4xl font-bold text-green-700">{count.toLocaleString()}</p>;
 };
 
+// Stats data
 const statsData = [
   { icon: <FaUsers />, label: "Children Supported", value: 6500 },
   { icon: <FaGraduationCap />, label: "Graduates Hired", value: 4000 },
   { icon: <FaHandsHelping />, label: "Staff Members", value: 650 },
   { icon: <FaAward />, label: "Human Rights Awards", value: 12 },
 ];
-
 const getFullImageUrl = (url?: string) => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
