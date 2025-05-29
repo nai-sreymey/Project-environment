@@ -23,6 +23,7 @@ interface Category {
   description: string | null;
 }
 
+const baseUrl = import.meta.env.VITE_API_URL;
 const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -90,7 +91,7 @@ const CreatePost: React.FC = () => {
         const formData = new FormData();
         Array.from(mediaFiles).forEach((file) => formData.append("files", file));
 
-        const uploadRes = await fetch("http://pse-eco-sharing-be.final25.psewmad.org/api/upload", {
+        const uploadRes = await fetch(`${baseUrl}/upload`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer${token}`,
@@ -122,7 +123,7 @@ const CreatePost: React.FC = () => {
 
       // console.log("Submitting payload:", payload);
 
-      const res = await fetch("http://pse-eco-sharing-be.final25.psewmad.org/api/projects", {
+      const res = await fetch(`${baseUrl}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -168,7 +169,7 @@ const CreatePost: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://pse-eco-sharing-be.final25.psewmad.org/api/categories");
+        const res = await fetch(`${baseUrl}/categories`);
         const data = await res.json();
         if (!res.ok) throw new Error("Failed to fetch categories");
         setCategories(data.data);
