@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Upload, Users, FileText } from "lucide-react";
 import Header from "../components/Header";
@@ -35,8 +35,7 @@ const CreatePost: React.FC = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [media, setMedia] = useState<MediaItem[]>([]);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [newEmail, setNewEmail] = useState("");
+  const [members,] = useState<Member[]>([]);
   const [slideLink, setSlideLink] = useState<string>(""); // single string
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -48,7 +47,6 @@ const CreatePost: React.FC = () => {
 
   const canSubmit = title && short_description && content && category;
 
-  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -60,12 +58,7 @@ const CreatePost: React.FC = () => {
     setMedia((prev) => [...prev, ...previews]);
   };
 
-  const handleAddMember = () => {
-    if (!newEmail.trim()) return alert("Email is required.");
-    if (!isValidEmail(newEmail)) return alert("Invalid email address.");
-    setMembers((prev) => [...prev, { email: newEmail.trim(), avatar: "/images/mey.png" }]);
-    setNewEmail("");
-  };
+
 
   const handleAddSlideLink = () => {
     const link = prompt("Enter slide link (e.g. Google Slides)");
@@ -106,22 +99,7 @@ const CreatePost: React.FC = () => {
         }
       }
 
-      // Construct the payload to match your API
-      // const payload = {
-      //   data: {
-      //     documentId: crypto.randomUUID(), // or generate how your system expects
-      //     title,
-      //     short_description,
-      //     content,
-      //     project_status: "padding", // adjust to your logic
-      //     publish_date: new Date().toISOString(), // or use a form value
-      //     slideLink,
-      //     attachments: mediaIDs.map((id) => ({ id })),
-      //     category: parseInt(category),
-      //   },
-      // };
 
-      // console.log("Submitting payload:", payload);
 
       const res = await fetch(`${baseUrl}/projects`, {
         method: "POST",
@@ -203,6 +181,10 @@ const CreatePost: React.FC = () => {
 
 
 
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="min-h-screen bg-green-50 relative" style={{ backgroundImage: 'url("/bg.jpg")', backgroundSize: "cover" }}>
       {isLoading && (
@@ -264,49 +246,29 @@ const CreatePost: React.FC = () => {
           className="w-full mb-4 p-4 border border-green-300 rounded-md resize-none overflow-hidden"
         />
 
-        <div className="flex flex-wrap gap-4 mb-6 items-center">
-          <input
-            type="email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            placeholder="Member email"
-            className="p-2 border border-green-300 rounded-md"
-          />
-          <button onClick={handleAddMember} className="bg-green-500 text-white px-4 py-2 rounded flex items-center gap-2">
-            <Users size={16} /> Add Member
-          </button>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="bg-green-500 text-white px-4 py-2 rounded-md"
-          >
-            <option value="">Select Category</option>
-            {categories.map((cat) => (
-              <option key={cat.id-1} value={cat.id-1}>
-                {cat.category_name}
-              </option>
-            ))}
-          </select>
-          <button onClick={() => fileInputRef.current?.click()} className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2">
-            <Upload size={16} /> Upload Media
-          </button>
-          <button onClick={handleAddSlideLink} className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2">
-            <FileText size={16} /> Add Slide Link
-          </button>
-        </div>
-
-        <input type="file" multiple accept="image/*,video/*" className="hidden" ref={fileInputRef} onChange={handleMediaChange} />
-
-        <div className="flex gap-4 overflow-x-auto mb-6">
-          {media.map((m, i) =>
-            m.type === "image" ? (
-              <img key={i} src={m.url} className="h-28 border border-green-300 rounded-md" alt="preview" />
-            ) : (
-              <video key={i} src={m.url} className="h-28 border border-green-300 rounded-md" controls />
-            )
-          )}
-        </div>
-
+<div className="flex flex-wrap items-center gap-4 mb-6">
+  {/* Category Selector */}
+  <div className="flex-1 min-w-[250px]">
+  <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className="w-full p-3 rounded-lg border border-green-400 bg-white text-green-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+      >
+        <option value="">📁 Select Category</option>
+        {categories.map((cat) => (
+          <option key={cat.id} value={cat.id}>
+            {cat.category_name}
+          </option>
+        ))}
+      </select>
+  </div>
+  <button
+    onClick={handleAddSlideLink}
+    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition duration-200 w-full mb-4 p-4 border border-green-300 rounded-md resize-none overflow-hidden"
+  >
+    <FileText size={16} /> Add Slide Link
+  </button>
+  <input type="file" multiple accept="image/*,video/*" className="hidden" ref={fileInputRef} onChange={handleMediaChange} />
         <div className="flex gap-4 flex-wrap mb-6">
           {(slideLink || "")
             .split("\n")
@@ -317,6 +279,37 @@ const CreatePost: React.FC = () => {
               </a>
             ))}
         </div>
+     
+  {/* Upload Media Button */}
+    <button
+        onClick={() => fileInputRef.current?.click()}
+        className="w-full flex justify-center items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg shadow transition duration-200"
+      >
+        <Upload size={18} /> Upload Media
+      </button>
+      <input
+        type="file"
+        ref={fileInputRef}
+        multiple
+        accept="image/*,video/*"
+        hidden
+        onChange={handleMediaChange}
+      />  
+      <div className="flex gap-4 overflow-x-auto mb-6">
+          {media.map((m, i) =>
+            m.type === "image" ? (
+              <img key={i} src={m.url} className="h-28 border border-green-300 rounded-md" alt="preview" />
+            ) : (
+              <video key={i} src={m.url} className="h-28 border border-green-300 rounded-md" controls />
+            )
+          )}
+        </div>
+
+
+</div>
+
+    
+       
 
         <button
   onClick={handleSubmit}

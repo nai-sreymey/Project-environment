@@ -369,11 +369,11 @@ const EventPage: React.FC = () => {
   );
 
   useEffect(() => {
-    setVisibleCount(3);
+    setVisibleCount(4);
   }, [searchTerm]);
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredEvents.length));
+    setVisibleCount((prev) => Math.min(prev + 4, filteredEvents.length));
   };
 
   return (
